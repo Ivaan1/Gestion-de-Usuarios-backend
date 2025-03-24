@@ -50,6 +50,7 @@ async function getLoggedUser(req, res) {
  * 
  * @returns Usuario buscado por ID.
  */
+
 async function getUser(req, res) {
     try {
         const id = req.params.id;

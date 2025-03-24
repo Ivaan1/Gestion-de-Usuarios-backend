@@ -1,1 +1,12 @@
 POST http://localhost:3000/
+
+POST http://localhost:3000/api/users.js
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez",
+  "age": 30,
+  "email": "juan@correo.com",
+  "password": "123456",
+  "role": "user"
+}

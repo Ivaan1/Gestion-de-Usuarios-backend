@@ -1,12 +1,17 @@
-POST http://localhost:3000/
 
-POST http://localhost:3000/api/users.js
+### USERS
+GET http://localhost:3000/api/users
+
+###
+POST http://localhost:3000/api/users HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "Juan Pérez",
-  "age": 30,
-  "email": "juan@correo.com",
-  "password": "123456",
-  "role": "user"
+  "name": "Jose Garcia", 
+  "email": "pepe.garcia@live.u-tad.com",
+  "password": "12345678",
+  "discipline": "diseño"
 }
+###
+POST http://localhost:3000/api/users HTTP/1.1
+Content-Type: multipart/form-data; boundary=Boundary123

@@ -15,8 +15,6 @@ app.use(cors())
 
 app.use(express.json())
 
-//Le digo que directorio es publico
-app.use(express.static("storage")) // http://localhost:3000/file.jpg
 
 app.use("/api", require("./routes")) //Lee routes/index.js por defecto
 

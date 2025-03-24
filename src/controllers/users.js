@@ -1,214 +1,93 @@
-const { usersModel } = require('../models')
-const { uploadToPinata } = require('../utils/handleUploadIPFS')
-
-const { matchedData } = require('express-validator')
-const { handleHttpError } = require('../utils/handleErrors')
-const users = require('../models/nosql/users')
+const { usersModel } = require('../models');
 
 /**
- * Función que busca todos los datos dentro de la coleción de "Users" en la base de datos de mongo.
+ * Función que busca todos los datos dentro de la colección de "Users" en la base de datos de Mongo.
  * Devuelve un array con la lista de todos los usuarios.
  * 
  * @param {*} req 
  * @param {*} res 
- * 
  * @returns Todos los usuarios registrados.
  */
 async function getUsers(req, res) {
     try {
-        const data = await usersModel.find({})
-        res.send(data)
+        const data = await usersModel.find({});
+        res.send(data);
     } catch (error) {
-        console.log(error)
-        handleHttpError(res, 'ERROR_GET_USERS')
-    }
-}
-
-/**
- * Funión que devuelve toda la información accesible del usuario que ha iniciado sesión. Se usa su token para coger el id de mongo.
- * 
- * @param {*} req 
- * @param {*} res 
- * 
- * @returns El usuario loggeado
- */
-async function getLoggedUser(req, res) {
-    try {
-        res.send(req.user)
-    } catch (error) {
-        console.log(error)
-        handleHttpError(res, 'ERROR_GET_USER')
+        console.log(error);
+        res.status(500).send('Error al obtener los usuarios');
     }
 }
 
 /**
  * Función para buscar un usuario por id. 
- * Si no se encuentra ese usuario en la base de datos devuelve un error
+ * Si no se encuentra ese usuario en la base de datos devuelve un error.
  * 
  * @param {*} req 
  * @param {*} res 
- * 
  * @returns Usuario buscado por ID.
  */
-
 async function getUser(req, res) {
     try {
         const id = req.params.id;
         const dato = await usersModel.findById(id);
 
         if (!dato) {
-            handleHttpError(res, 'USER_NOT_FOUND', 400)
+            return res.status(400).send('Usuario no encontrado');
         }
 
         res.send({ dato });
     } catch (error) {
         console.error(error);
-        handleHttpError(res, 'ERROR_GET_USER')
+        res.status(500).send('Error al obtener el usuario');
     }
 }
 
 /**
- * @deprecated Por que esto lo hace el register. Cuando se acuerde con el equipo: eliminar
+ * Función para crear un nuevo usuario.
  * 
  * @param {*} req 
  * @param {*} res 
+ * @returns Usuario creado.
  */
 async function createUsers(req, res) {
     try {
         const { body } = req;
 
         const data = await usersModel.create(body);
-        res.send(data);
+        res.status(201).send(data);
     } catch (error) {
-        console.error('Error creating item:', error);
-        handleHttpError(res, 'ERROR_CREATE_USER')
-    }
-};
-
-/**
- * Función para añadir la foto del perfil de usuario. Solo la puede cambiar la persona loggeada porque se usa su token con su id.
- * 
- * @param {*} req 
- * @param {*} res 
- */
-async function uploadPhoto(req, res) {
-    try {
-        const { body } = req
-        const id = req.user._id
-
-        if (!req.file) {
-            handleHttpError(res, 'NO_FILE_UPLOADED', 400)
-        }
-
-        const fileBuffer = req.file.buffer;
-        const fileName = req.file.originalname;
-        const pinataResponse = await uploadToPinata(fileBuffer, fileName);
-
-        const ipfsFile = pinataResponse.IpfsHash;
-
-        const ipfs = `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${ipfsFile}`;
-
-        body.profilePicture = ipfs;
-
-        const data = await usersModel.findByIdAndUpdate(id, { $set: body }, { new: true });
-        res.send(data);
-    } catch (error) {
-        console.error(error);
-        handleHttpError(res, 'ERROR_CREATE_USER')
+        console.error('Error creando el usuario:', error);
+        res.status(500).send('Error al crear el usuario');
     }
 }
 
 /**
- * Función para actualizar la foto de perfil
- * @param {*} req 
- * @param {*} res 
- */
-async function updateImage(req, res){
-    try {
-        const id = req.user.id
-        //TODO: esto hay que cogerlo de matchedData -> Preguntar a Profesor por cómo hacer un validador para esto
-        const fileBuffer = req.file.buffer
-        const fileName = req.file.originalname
-
-        const pinataResponse = await uploadToPinata(fileBuffer, fileName)
-        const ipfsFile = pinataResponse.IpfsHash
-
-        const ipfs = `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${ipfsFile}`;
-
-        const data = await usersModel.findOneAndUpdate({_id: id}, {$set: {profilePicture: ipfs}}, {new: true})
-
-        res.send(data)
-
-
-    } catch (error) {
-        console.log(error)
-        handleHttpError(res, 'ERROR_UPDATE_IMAGE')
-    }
-}
-
-/**
- * Función para actualizar los campos del usuario. Se puede hacer con una función path o put porque la consulta de mongo acepta los dos con el $set.
- * @param {*} req 
- * @param {*} res 
- * 
- * @returns El objeto actualizado
- */
-async function updateUser(req, res) {
-    try {
-        const { id, ...body } = matchedData(req)
-        const data = await usersModel.findByIdAndUpdate(id, { $set: body }, { new: true })
-        res.send(data)
-    } catch (error) {
-        console.log(error)
-        handleHttpError(res, 'ERROR_UPDATE_USER')
-    }
-}
-
-
-/**
- * Función para eliminar un usuario con el id. No se usa para eliminar al mismo usuario que está loggado.
+ * Función para eliminar un usuario con el id. 
  * 
  * @param {*} req 
  * @param {*} res 
- * 
- * @returns Respueta del borrado de la base de datos.
+ * @returns Respuesta del borrado de la base de datos.
  */
 async function deleteUser(req, res) {
     try {
-        const { id } = matchedData(req)
-        const data = await usersModel.findByIdAndDelete({ _id: id })
-        res.send(data)
-    } catch (error) {
-        console.log(error)
-        handleHttpError(res, 'ERROR_DELETE_USER')
-    }
-}
+        const { id } = req.params;  // Obtener el id desde la URL
 
-/**
- * Función para eliminar el mimso usuario que está loggado.
- * @param {*} req 
- * @param {*} res 
- * 
- * @returns Respuesta del borrado de la base de datos.
- */
-async function deleteLoggedUser(req, res) {
-    try {
-        const id = req.user.id
-        const data = await usersModel.findByIdAndDelete({ _id: id })
-        res.send(data)
+        const data = await usersModel.findByIdAndDelete(id);
+
+        if (!data) {
+            return res.status(400).send('Usuario no encontrado');
+        }
+
+        res.send('Usuario eliminado');
     } catch (error) {
-        console.log(error)
-        handleHttpError(res, 'ERROR_DELETE_YOUR_USER')
+        console.log(error);
+        res.status(500).send('Error al eliminar el usuario');
     }
 }
 
 module.exports = {
     getUsers,
     getUser,
-    getLoggedUser,
-    uploadPhoto,
     createUsers,
-    updateUser,
-    deleteUser,
-    deleteLoggedUser
+    deleteUser
 };

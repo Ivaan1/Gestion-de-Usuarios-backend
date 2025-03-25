@@ -4,11 +4,8 @@ const cors = require("cors")
 
 const dbConnect = require('./config/mongo')
 
-const router = require("./routes/index")
-
-
 //require('dotenv').config();
-require('dotenv').config({ path: '.env' });
+require('dotenv').config();
 
 const app = express()
 

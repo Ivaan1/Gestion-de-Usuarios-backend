@@ -4,6 +4,13 @@ POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
+  "email": "ivanmanuel121310@gmail.com",
   "password": "12345678"
+}
+@token = token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2UyZDQ0NjFhNjNmMDViNzg3YjhkOTAiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0MjkxODcyNiwiZXhwIjoxNzUzMjg2NzI2fQ.rm7Jl5LZ05xnnNgXjaJBEAuqKPLJ9Qw5mmcn-WBRK5s
+###
+POST http://localhost:3000/api/auth/validation  
+Content-Type: application/json
+{
+  "code " : "949095"
 }

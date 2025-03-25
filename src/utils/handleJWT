@@ -3,6 +3,9 @@ const jwt = require("jsonwebtoken")
 const JWT_SECRET = process.env.SECRET_JWT
 
 function tokenSign(user){
+    console.log("JWT_SECRET:", JWT_SECRET); //BORRAR LUEGO
+    console.log("SECRET_JWT:", process.env.SECRET_JWT);
+    console.log("HOLAAAAAAAAA");
     const sign = jwt.sign(
         {
             _id: user._id,

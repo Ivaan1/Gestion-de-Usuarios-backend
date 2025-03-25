@@ -6,7 +6,9 @@ const dbConnect = require('./config/mongo')
 
 const router = require("./routes/index")
 
-require('dotenv').config();
+
+//require('dotenv').config();
+require('dotenv').config({ path: '.env' });
 
 const app = express()
 

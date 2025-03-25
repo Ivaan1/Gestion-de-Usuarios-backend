@@ -25,7 +25,7 @@ const UserScheme = new mongoose.Schema(
         },
         emailCode: {
             type: String,
-           // required: true,
+            required: true,
             minlength: 6,
             maxlength: 6
         },

@@ -3,25 +3,29 @@ const router = express.Router();
 
 // Controladores para manejar las rutas
 const { getUsers, getUser, createUsers, deleteUser } = require("../controllers/users");
+const { validatorGetUser, validatorCreateUser, validatorUpdateUser } = require('../validators/users')
+const authMiddleWare = require("../middleware/sessions")
 
 /**
  * Ruta para coger todos los usuarios registrados
  */
-router.get("/", getUsers);
+router.get("/", authMiddleWare, getUsers)
 
 /**
  * Ruta para buscar un usuario por id.
  */
-router.get("/:id", getUser);
+router.get("/:id", authMiddleWare, validatorGetUser, getUser)
 
 /**
- * Ruta para crear un nuevo usuario
- */
-router.post("/", createUsers);
-
 /**
- * Ruta para eliminar un usuario por id.
+ * @deprecated Esta función la hace el register
  */
-router.delete("/:id", deleteUser);
+router.post("/", validatorCreateUser, createUsers)
+
+
+/** 
+ * Ruta que elimina el usuario que se indica con el id 
+ */
+router.delete("/:id", authMiddleWare, validatorGetUser, deleteUser)
 
 module.exports = router;

@@ -11,13 +11,14 @@ const dbConnect = () => {
     // Intenta conectar a la base de datos
     try {
         // Conexión a MongoDB usando la URI proporcionada
-        mongoose.connect(db_uri, { useNewUrlParser: true, useUnifiedTopology: true })
+        mongoose.connect(db_uri, { useNewUrlParser: true, useUnifiedTopology: true})
             .then(() => {
                 console.log("Conexión exitosa a la base de datos");
             })
             .catch((error) => {
                 console.error("Error conectando a la BD:", error); // Manejo del error en caso de fallo
             });
+            
     } catch (error) {
         console.error("Error al intentar conectar a la base de datos:", error); // En caso de algún fallo en el try
     }

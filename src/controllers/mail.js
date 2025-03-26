@@ -2,7 +2,7 @@ const { sendEmail } = require('../utils/handleEmail')
 const { handleHttpError } = require('../utils/handleErrors')
 const { matchedData } = require('express-validator')
 
-async function send(req, res){
+const send = async (req, res) => {
     try {
         const info = matchedData(req)
         const data = await sendEmail(info)

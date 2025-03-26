@@ -10,9 +10,9 @@ const UserScheme = new mongoose.Schema(
             // required: true
         },
         email: {
-            type: String, //Tiene que ser con dominio de la universidad
+            type: String, 
             unique: true,
-            // required: true
+            required: true
         },
         password: {
             type: String, // TODO Guardaremos el hash

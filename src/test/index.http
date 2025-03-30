@@ -1,18 +1,57 @@
-
-###
-POST http://localhost:3000/api/auth/register
+### Registro de usuario
+POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "ivanmanuel121310@gmail.com",
-  "password": "12345678"
+  "email": "test@example.com",
+  "password": "password123"
 }
 
-###
-@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2UyZDQ0NjFhNjNmMDViNzg3YjhkOTAiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0MjkxODcyNiwiZXhwIjoxNzUzMjg2NzI2fQ.rm7Jl5LZ05xnnNgXjaJBEAuqKPLJ9Qw5mmcn-WBRK5s
-###
-POST http://localhost:3000/api/auth/validation  
+### Guardar manualmente el token (Reemplaza después de la primera ejecución)
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2U5OTg5ZDNiMGJhOGFkYzk1NWRlNTYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0MzM2MjIwNSwiZXhwIjoxNzUzNzMwMjA1fQ.nN1as7VoboVjeol9bAuIUg873Ds6hjIH3f6oiUxQ-qQ
+
+### Validación usando el token almacenado
+POST http://localhost:5000/api/auth/validation
 Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
 {
-  "code " : "949095"
+  "code": "534658"
 }
+
+### Login de usuario
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "email" : "test@example.com",
+  "password" : "password123"
+}
+
+### Obtener información de todos los usuarios
+GET http://localhost:5000/api/users
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### 5. Usuarios: Crear un nuevo usuario
+POST http://localhost:5000/api/users
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+
+@newUserId = 67e4548c9e9f50149391a247
+### 6. Usuarios: Obtener un usuario por ID (utilizando el id del usuario creado)
+GET http://localhost:5000/api/users/{{newUserId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### 7. Usuarios: Borrar a todos los usuarios 
+DELETE http://localhost:5000/api/users
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json

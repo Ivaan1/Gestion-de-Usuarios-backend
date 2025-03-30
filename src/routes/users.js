@@ -18,7 +18,7 @@ router.get("/:id", authMiddleWare, validatorGetUser, getUser)
 
 /**
 /**
- * @deprecated Esta función la hace el register
+ *Crear un nuevo usuario
  */
 router.post("/", validatorCreateUser, createUsers)
 

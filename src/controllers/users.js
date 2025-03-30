@@ -85,9 +85,36 @@ async function deleteUser(req, res) {
     }
 }
 
+
+/**
+ * Función para eliminar todos los usuarios.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @returns Respuesta del borrado de la base de datos.
+ */
+async function deleteAllUsers(req, res) {
+    try {
+        // Elimina todos los usuarios
+        const data = await usersModel.deleteMany({});
+
+        // Verifica si se eliminaron usuarios
+        if (data.deletedCount === 0) {
+            return res.status(400).send('No se han encontrado usuarios para eliminar');
+        }
+
+        res.send('Usuarios eliminados correctamente');
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Error al eliminar los usuarios');
+    }
+}
+
 module.exports = {
     getUsers,
     getUser,
     createUsers,
-    deleteUser
+    deleteUser,
+    deleteAllUsers
+    // Puedes agregar más funciones según sea necesario
 };

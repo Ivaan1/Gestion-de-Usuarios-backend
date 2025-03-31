@@ -1,3 +1,5 @@
+// /src/utils/handleUploadIPFS.js
+
 const uploadToPinata = async (fileBuffer, fileName) => {
     //const privateUrl = `https://uploads.pinata.cloud/v3/files`; 
     const publicURL = `https://api.pinata.cloud/pinning/pinFileToIPFS`;

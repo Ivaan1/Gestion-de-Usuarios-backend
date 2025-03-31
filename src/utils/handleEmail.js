@@ -3,10 +3,7 @@ const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
 
-console.log("CLIENT_ID", process.env.CLIENT_ID,
-    "CLIENT_SECRET", process.env.CLIENT_SECRET,
-    "REDIRECT_URI", process.env.REDIRECT_URI,
-);
+
 const createTransporter = async () => {
     const oauth2Client = new OAuth2(
       process.env.CLIENT_ID,

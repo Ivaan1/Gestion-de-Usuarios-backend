@@ -110,11 +110,46 @@ async function deleteAllUsers(req, res) {
     }
 }
 
+/**
+ * Función para añadir la foto del perfil de usuario. Solo la puede cambiar la persona loggeada porque se usa su token con su id.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+async function uploadImage(req, res) {
+    try {
+        const { body } = req
+        const id = req.user._id
+
+        if (!req.file) {
+            handleHttpError(res, 'NO_FILE_UPLOADED', 400)
+        }
+
+        const fileBuffer = req.file.buffer;
+        const fileName = req.file.originalname;
+        const pinataResponse = await uploadToPinata(fileBuffer, fileName);
+
+        const ipfsFile = pinataResponse.IpfsHash;
+
+        const ipfs = `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${ipfsFile}`;
+
+        body.profilePicture = ipfs;
+
+        const data = await usersModel.findByIdAndUpdate(id, { $set: body }, { new: true });
+        
+        res.send(data);
+    } catch (error) {
+        console.error(error);
+        handleHttpError(res, 'ERROR_CREATE_USER')
+    }
+}
+
 module.exports = {
     getUsers,
     getUser,
     createUsers,
     deleteUser,
-    deleteAllUsers
+    deleteAllUsers,
+    uploadImage
     // Puedes agregar más funciones según sea necesario
 };

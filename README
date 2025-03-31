@@ -1,31 +1,40 @@
-Crear nuevo directorio
- npm init -y
- npm i express nodemon cors dotenv mongoose multer
- Crear fichero .gitignore:
- ● node_modules/
- ● .env
- Crear fichero .env
- ● PORT=3000
- ● DB_URI=
- Crear app.js
+# Proyecto: Mi Proyecto
 
-
+## Estructura del Proyecto
 
 mi-proyecto/
 │
-├── node_modules/                # Módulos instalados por npm
+├── config/                      # Configuración del proyecto
+│
+├── controllers/                 # Controladores que gestionan la lógica de las rutas
+│
+├── middleware/                  # Middleware para validaciones, autenticación, etc.
+│
+├── models/                      # Modelos para interactuar con la base de datos
+│
+├── routes/                      # Definición de rutas de la API
+│
+├── test/                        # Pruebas del proyecto
+│
+├── utils/                       # Utilidades y funciones auxiliares
+│
+├── validators/                  # Validadores para los datos de entrada
+│
+├── app.js                       # Archivo principal que inicializa el servidor
+│
+├── node_modules/                # Módulos instalados por npm (ignorado en Git)
 ├── package.json                 # Configuración del proyecto y dependencias
 ├── package-lock.json            # Versiones exactas de las dependencias
-│
-├── src/                         # Carpeta donde se encuentran los archivos de tu aplicación
-│   ├── controllers/             # Controladores que gestionan la lógica de las rutas
-│   │   └── userController.js    # Ejemplo de controlador
-│   ├── models/                  # Modelos para interactuar con la base de datos
-│   │   └── userModel.js         # Ejemplo de modelo
-│   ├── routes/                  # Rutas de la API
-│   │   └── userRoutes.js        # Ejemplo de ruta
-│   ├── middleware/              # Middleware para validaciones, autenticación, etc.
-│   │   └── authMiddleware.js    # Ejemplo de middleware
-│   └── server.js                # Archivo principal que inicializa el servidor
-│
-└── .gitignore                   # Archivos y carpetas que Git debe ignorar (como node_modules)
+└── .gitignore
+
+
+## Instalación
+```sh
+npm install
+```
+
+## Ejecución
+```sh
+npm start
+```
+

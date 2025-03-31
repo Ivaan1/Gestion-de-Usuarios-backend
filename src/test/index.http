@@ -17,7 +17,7 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Guardar manualmente el token (Reemplaza después de la primera ejecución)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMDc1MzQ1ZjJmYzdjNGM3M2I0MGEiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0MzQ1NjE1OSwiZXhwIjoxNzUzODI0MTU5fQ.pRARvDuwzzk2uYBsBrxArWs1rPJXp8kxi5q9565JYug
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0MzQ1NzkzMywiZXhwIjoxNzUzODI1OTMzfQ.Z4qP7Kx-dOLZ43_zp5b8sijN8X246PQ8v1OTqNIbq3o
 
 ### Validación usando el token almacenado
 POST http://localhost:5000/api/auth/validation
@@ -25,10 +25,10 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "code": "910872"
+  "code": 920845
 }
 ###
-@UserId = 67eb075345f2fc7c4c73b40a
+@UserId = 67eb0e6bfdd8ffae9ac70ab6
 
 ### Rellenar usuario 
 PATCH http://localhost:5000/api/users/{{UserId}}
@@ -83,5 +83,5 @@ Content-Type: multipart/form-data
 
 {
   "userId": "{{UserId}}",
-  "image": "example.png"
+  "image": "image.png"
 }

@@ -28,6 +28,11 @@ const UserScheme = new mongoose.Schema(
             default: Date.now,
             select: false
         },
+        step: Number,
+        tries: {
+            type: Number,
+            default: 3
+        },
         validationCode: {
             type: Number
         }, 

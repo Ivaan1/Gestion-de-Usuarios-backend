@@ -62,7 +62,8 @@ async function validateUser(req, res) {
             console.log("Already validated")
             return
         }
-
+        console.log("code : " + code)
+        console.log("user code : " + user.validationCode)
         if (code === user.validationCode) {
             const validated = true
             const response = await usersModel.findByIdAndUpdate(id, { $set: { validated } }, { new: true })

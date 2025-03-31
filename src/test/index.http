@@ -6,20 +6,7 @@ Content-Type: application/json
   "email": "test@example.com",
   "password": "password123"
 }
-
-### Guardar manualmente el token (Reemplaza después de la primera ejecución)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2U5OTg5ZDNiMGJhOGFkYzk1NWRlNTYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0MzM2MjIwNSwiZXhwIjoxNzUzNzMwMjA1fQ.nN1as7VoboVjeol9bAuIUg873Ds6hjIH3f6oiUxQ-qQ
-
-### Validación usando el token almacenado
-POST http://localhost:5000/api/auth/validation
-Content-Type: application/json
-Authorization: Bearer {{auth_token}}
-
-{
-  "code": "534658"
-}
-
-### Login de usuario
+### Inicio de sesión de usuario
 POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
@@ -29,6 +16,35 @@ Authorization: Bearer {{auth_token}}
   "password" : "password123"
 }
 
+### Guardar manualmente el token (Reemplaza después de la primera ejecución)
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMDc1MzQ1ZjJmYzdjNGM3M2I0MGEiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0MzQ1NjE1OSwiZXhwIjoxNzUzODI0MTU5fQ.pRARvDuwzzk2uYBsBrxArWs1rPJXp8kxi5q9565JYug
+
+### Validación usando el token almacenado
+POST http://localhost:5000/api/auth/validation
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "code": "910872"
+}
+###
+@UserId = 67eb075345f2fc7c4c73b40a
+
+### Rellenar usuario 
+PATCH http://localhost:5000/api/users/{{UserId}}
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Test User",
+  "about": "This is a test user",
+  "phone": "+1234567890"
+}
+
+
+
+
+
 ### Obtener información de todos los usuarios
 GET http://localhost:5000/api/users
 Authorization: Bearer {{auth_token}}
@@ -37,17 +53,16 @@ Content-Type: application/json
 ### 5. Usuarios: Crear un nuevo usuario
 POST http://localhost:5000/api/users
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
 
 {
-  "email": "testuser@example.com",
+  "email": "testuser2@example.com",
   "password": "password123"
 }
 
 
-@newUserId = 67e4548c9e9f50149391a247
+
 ### 6. Usuarios: Obtener un usuario por ID (utilizando el id del usuario creado)
-GET http://localhost:5000/api/users/{{newUserId}}
+GET http://localhost:5000/api/users/{{UserId}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
@@ -55,3 +70,18 @@ Content-Type: application/json
 DELETE http://localhost:5000/api/users
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
+
+### 8. Usuarios: Borrar un usuario por ID (utilizando el id del usuario creado)
+DELETE http://localhost:5000/api/users/{{UserId}}
+Authorization: Bearer {{auth_token}} 
+
+### Usuarios: Subir foto (PATCH /api/users/photo)
+
+PATCH http://localhost:5000/api/users/photo
+Authorization: Bearer {{auth_token}}
+Content-Type: multipart/form-data
+
+{
+  "userId": "{{UserId}}",
+  "image": "example.png"
+}

@@ -16,9 +16,10 @@ fs.readdirSync(__dirname)
     .filter((file) => {
         const name = removeExtension(file); // Eliminamos la extensión del archivo para obtener solo el nombre (por ejemplo, 'users').
         
-        if (name !== 'index') { // No queremos cargar el archivo index.js, porque este archivo sirve para cargar otras rutas.
-            router.use('/' + name, require('./' + name)); 
-        }
+        return name !== 'index';
+    }).forEach((file) => {
+        const name = removeExtension(file);
+        router.use('/' + name, require('./' + name));
     });
 
 module.exports = router; // Exportamos el enrutador para que pueda ser utilizado en otros archivos, como 'app.js'.

@@ -1,4 +1,8 @@
 const { usersModel } = require('../models');
+const { handleHttpError } = require ('../utils/handleErrors')
+const { uploadToPinata } = require('../utils/handleUploadIPFS')
+const { matchedData } = require('express-validator')
+
 
 /**
  * Función que busca todos los datos dentro de la colección de "Users" en la base de datos de Mongo.
@@ -144,12 +148,24 @@ async function uploadImage(req, res) {
     }
 }
 
+async function updateUser(req, res) {
+    try {
+        const { id, ...body } = matchedData(req)
+        const data = await usersModel.findByIdAndUpdate(id, { $set: body }, { new: true })
+        res.send(data)
+    } catch (error) {
+        console.log(error)
+        handleHttpError(res, 'ERROR_UPDATE_USER')
+    }
+}
+
 module.exports = {
     getUsers,
     getUser,
     createUsers,
     deleteUser,
     deleteAllUsers,
-    uploadImage
+    uploadImage,
+    updateUser
     // Puedes agregar más funciones según sea necesario
 };

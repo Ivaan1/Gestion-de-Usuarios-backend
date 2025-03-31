@@ -2,10 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 // Controladores para manejar las rutas
-const { getUsers, getUser, createUsers, deleteUser, deleteAllUsers, uploadImage } = require("../controllers/users");
+const { getUsers, getUser, createUsers, deleteUser, deleteAllUsers, uploadImage, updateUser } = require("../controllers/users");
 const { validatorGetUser, validatorCreateUser, validatorUpdateUser } = require('../validators/users')
 const authMiddleWare = require("../middleware/sessions")
-
 const { uploadMiddlewareMemory } = require("../utils/handleStorage")
 
 /**
@@ -37,6 +36,11 @@ router.delete("/",authMiddleWare, deleteAllUsers)
 
 
 router.patch("/image", authMiddleWare, uploadMiddlewareMemory.single("image"), uploadImage)
+
+/**
+ * Para actualizar los campos del usuario que se pasen en el body
+ */
+router.patch("/:id", authMiddleWare, validatorGetUser, validatorUpdateUser, updateUser)
 
 
 module.exports = router;

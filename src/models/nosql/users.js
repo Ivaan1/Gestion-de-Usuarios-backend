@@ -34,6 +34,12 @@ const UserScheme = new mongoose.Schema(
         validated: {
             type: Boolean,
             default: false
+        },
+        about: {
+            type: String
+        },
+        phone: {
+            type: String
         }
     },
     {

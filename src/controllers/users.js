@@ -170,6 +170,18 @@ async function deleteLoggedUser(req, res) {
     }
 }
 
+
+async function updateUserAddress(req, res) {
+    try {
+        const { id, ...body } = matchedData(req)
+        const data = await usersModel.findByIdAndUpdate(id, { $set: body }, { new: true })
+        res.send(data)
+    } catch (error) {
+        console.log(error)
+        handleHttpError(res, 'ERROR_UPDATE_ADDRESS_USER')
+    }
+}
+
 module.exports = {
     getUsers,
     getUser,
@@ -178,6 +190,7 @@ module.exports = {
     deleteAllUsers,
     uploadImage,
     updateUser,
-    deleteLoggedUser
+    deleteLoggedUser,
+    updateUserAddress
     // Puedes agregar más funciones según sea necesario
 };

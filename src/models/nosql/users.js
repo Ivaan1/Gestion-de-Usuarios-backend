@@ -75,6 +75,10 @@ const UserScheme = new mongoose.Schema(
             type: addressSchema,
             required: false
         },
+        deleted: { // Usuario eliminado
+            type: Boolean,
+            default: false
+        }
     },
     {
         timestamp: true, 

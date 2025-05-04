@@ -54,6 +54,10 @@ const clientSchema = new mongoose.Schema({
     pendingDeliveryNotes: { // Albaranes pendientes
         type: Number,
         default: 0
+    },
+    deleted: { // Usuario eliminado
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true }) // Usar timestamps para createdAt y updatedAt
 

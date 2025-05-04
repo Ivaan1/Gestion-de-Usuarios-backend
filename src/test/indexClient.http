@@ -8,8 +8,8 @@ Content-Type: application/json
 }
 
 ### Guardar manualmente el token (Reemplaza despues del login)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjM5OTExMCwiZXhwIjoxNzU2NzY3MTEwfQ.A4lKwEOB88fDgnqamZMoQG9_yzvgfcoCJRTWxS6pxwE
-@userID = "67eb0e6bfdd8ffae9ac70ab6"
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQwMTI2MiwiZXhwIjoxNzU2NzY5MjYyfQ.uR1owdtD8wTi-lvAtXZs2xyzA4xsILTvtAaMmHF01vc
+@userID = 67eb0e6bfdd8ffae9ac70ab6
 
 ### Listar todos los clientes o empresas relacionados con el usuario
 GET http://localhost:5000/api/clients
@@ -26,7 +26,7 @@ Authorization: Bearer {{auth_token}}
   "name": "ACS",
   "email": "example@gmail.com",
   "cif": "D52921210",
-  "userId": "67eb0e6bfdd8ffae9ac70ab6",
+  "userId": "{{userID}}",
   "address": {
     "street": "Carlos V",
     "number": 22,
@@ -35,3 +35,23 @@ Authorization: Bearer {{auth_token}}
     "province": "Madrid"
   }
 }
+###
+
+@ClientId = 6817f56124cc89dcdcc02ad9
+
+### Obtener un cliente por ID 
+GET http://localhost:5000/api/clients/{{ClientId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+
+### Archivar un cliente por ID
+DELETE  http://localhost:5000/api/clients/archive/{{ClientId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### Obtener todos los clientes archivados
+GET http://localhost:5000/api/clients/archive
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+

@@ -19,6 +19,7 @@ async function authMiddleWare(req, res, next) {
         }
 
         const user = await usersModel.findById(dataToken._id)
+        console.log('Middleware auth ejecutado');
         req.user = user
         next()
     } catch (e) {

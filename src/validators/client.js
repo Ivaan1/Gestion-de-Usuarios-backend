@@ -12,6 +12,7 @@ const validatorCreateClient = [
     check("address.postal").exists().isNumeric().withMessage("El código postal debe ser numérico"),
     check("address.city").exists().notEmpty().withMessage("La ciudad es obligatoria"),
     check("address.province").exists().notEmpty().withMessage("La provincia es obligatoria"),
+    check("deleted").optional().isBoolean().withMessage("El campo 'deleted' debe ser un booleano"),
     (req, res, next) => {
         validateResults(req, res, next)
     }

@@ -1,4 +1,31 @@
 const mongoose = require("mongoose")
+
+
+// Direccion del usuario
+const addressSchema = new mongoose.Schema({
+    street: { // Calle
+        type: String,
+        required: true
+    },
+    number: { // Número de la dirección
+        type: Number,
+        required: true
+    },
+    postal: { // Código postal
+        type: Number,
+        required: true
+    },
+    city: { // Ciudad
+        type: String,
+        required: true
+    },
+    province: { // Provincia
+        type: String,
+        required: true
+    }
+}, { _id: false }) // No queremos un _id para la dirección
+
+
 const UserScheme = new mongoose.Schema(
     {
         name: {
@@ -44,9 +71,13 @@ const UserScheme = new mongoose.Schema(
             type: String,
             required: false
         },
+        address: { // Dirección del usuario
+            type: addressSchema,
+            required: false
+        },
     },
     {
-        timestamp: true, // TODO createdAt, updatedAt
+        timestamp: true, 
         versionKey: false
     }
 )

@@ -24,9 +24,4 @@ const validatorUpdateUser = [
 ];
 
 
-//TODO: preguntar a Profesor
-const validatorUpdateUserPhoto = [
-    (req, res, next) => validateResults(req, res, next)
-]
-
 module.exports = {validatorGetUser, validatorCreateUser, validatorUpdateUser}

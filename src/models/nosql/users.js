@@ -15,7 +15,7 @@ const UserScheme = new mongoose.Schema(
             required: true
         },
         password: {
-            type: String, // TODO Guardaremos el hash
+            type: String, 
             select: false
         },
         role: {
@@ -40,12 +40,10 @@ const UserScheme = new mongoose.Schema(
             type: Boolean,
             default: false
         },
-        about: {
-            type: String
+        nif: {
+            type: String,
+            required: false
         },
-        phone: {
-            type: String
-        }
     },
     {
         timestamp: true, // TODO createdAt, updatedAt

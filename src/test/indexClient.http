@@ -1,0 +1,37 @@
+### Inicio de sesión de usuario
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "test@example.com",
+  "password" : "password123"
+}
+
+### Guardar manualmente el token (Reemplaza despues del login)
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjM5OTExMCwiZXhwIjoxNzU2NzY3MTEwfQ.A4lKwEOB88fDgnqamZMoQG9_yzvgfcoCJRTWxS6pxwE
+@userID = "67eb0e6bfdd8ffae9ac70ab6"
+
+### Listar todos los clientes o empresas relacionados con el usuario
+GET http://localhost:5000/api/clients
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+
+### Crear nuevo cliente o empresa
+POST http://localhost:5000/api/clients
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "ACS",
+  "email": "example@gmail.com",
+  "cif": "D52921210",
+  "userId": "67eb0e6bfdd8ffae9ac70ab6",
+  "address": {
+    "street": "Carlos V",
+    "number": 22,
+    "postal": 28936,
+    "city": "Móstoles",
+    "province": "Madrid"
+  }
+}

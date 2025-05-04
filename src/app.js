@@ -9,7 +9,7 @@ const app = express()
 
 
 const swaggerUi = require("swagger-ui-express")
-const swaggerSpecs = require("./docs/swagger")
+const { specs } = require('./docs/swagger')
 
 
 //Le decimos a la app de express() que use cors para evitar el error Cross-Domain (XD)
@@ -22,13 +22,13 @@ app.use("/api", require("./routes")) //Lee routes/index.js por defecto
 
 app.use("/api-docs",
     swaggerUi.serve,
-    swaggerUi.setup(swaggerSpecs)
+    swaggerUi.setup(specs)
    )
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5000
 
 app.listen(port, () => {
-    console.log("Servidor escuchando en el puerto " + port + "\nhttps://localhost:" + port)
+    console.log("Servidor escuchando en el puerto " + port + "\nhttp://localhost:" + port)
     dbConnect();
 })
 

@@ -4,11 +4,13 @@ const { registerUser, loginUser, updatePassword, recoverPassword, validateUser }
 const router = express.Router()
 const authMiddleWare = require("../middleware/sessions")
 
-
+//POSTS
 router.post("/register", validatorRegister, registerUser)
 router.post("/login", validatorLogin, loginUser)
-router.patch("/newpassword", validatorRecoverPassword, validatorNewPassword, updatePassword)
 router.post("/recovery", validatorRecoverPassword, recoverPassword)
 router.post("/validation", authMiddleWare,validatorValidation, validateUser)
+
+//PATCHS
+router.patch("/newpassword", validatorRecoverPassword, validatorNewPassword, updatePassword)
 
 module.exports = router

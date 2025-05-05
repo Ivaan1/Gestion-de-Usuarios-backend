@@ -34,7 +34,7 @@ const validatorCreateAlbaran = [
 
     check('sign')
         .optional({ checkFalsy: true })
-        .isString().withMessage('La firma debe ser una cadena de texto'),
+        .isString().withMessage('La firma debe ser un fichero valido (png)'),
 
     check('pending')
         .optional({ checkFalsy: true })

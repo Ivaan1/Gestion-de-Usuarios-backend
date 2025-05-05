@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const albaranSchema = new mongoose.Schema({
+    userId : {
+        type: mongoose.Schema.Types.ObjectId, 
+        required: true, 
+        ref: 'users' 
+    },
     clientId: { 
         type: mongoose.Schema.Types.ObjectId, 
         required: true, 
@@ -13,18 +18,18 @@ const albaranSchema = new mongoose.Schema({
     },
     format: { 
         type: String, 
-        enum: ['material', 'hours'], // El formato puede ser 'material' o 'hours'
+        enum: ['materials', 'hours'], // El formato puede ser 'material' o 'hours'
         required: true 
     },
-    material: { 
-        type: String, 
+    materials: { 
+        type: [String],
         required: function() { return this.format === 'material'; }, // Solo requerido si el formato es material
-        default: null
+        default: []
     },
     hours: { 
-        type: Number, 
+        type: [Number],
         required: function() { return this.format === 'hours'; }, // Solo requerido si el formato es hours
-        default: null
+        default: []
     },
     description: { 
         type: String, 

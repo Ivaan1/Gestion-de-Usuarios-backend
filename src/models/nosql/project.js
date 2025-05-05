@@ -34,10 +34,6 @@ const projectSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    email: { // Correo del proyecto
-        type: String,
-        required: false
-    },
     address: { // Dirección del proyecto
         type: addressSchema,
         required: false

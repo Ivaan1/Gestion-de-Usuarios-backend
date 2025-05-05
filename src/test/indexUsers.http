@@ -17,7 +17,7 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Guardar manualmente el token (Reemplaza después de la primera ejecución)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0MzQ1NzkzMywiZXhwIjoxNzUzODI1OTMzfQ.Z4qP7Kx-dOLZ43_zp5b8sijN8X246PQ8v1OTqNIbq3o
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE5MGYyZTAyOGU2YjhiNGU3Njc2YjUiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQ3Mjc2NSwiZXhwIjoxNzU2ODQwNzY1fQ.ZUskqGCbTfFwMthqcnX6eyBbfTHVRYVEY44uIpcFGWM
 
 ### Validación usando el token almacenado
 POST http://localhost:5000/api/auth/validation
@@ -25,10 +25,10 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "code": 920845
+  "code": 886682
 }
 ###
-@UserId = 67eb0e6bfdd8ffae9ac70ab6
+@UserId = 68190f2e028e6b8b4e7676b5
 
 ### Rellenar usuario 
 PATCH http://localhost:5000/api/users/{{UserId}}
@@ -41,7 +41,26 @@ Authorization: Bearer {{auth_token}}
   "phone": "+1234567890"
 }
 
+### Añadir una empresa al usuario
+PATCH http://localhost:5000/api/users/company
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
 
+{
+  "name": "Test Company",
+  "address": {
+    "street": "Main St",
+    "number": 123,
+    "postal": 12345,
+    "city": "Test City",
+    "province": "Test Province"
+  }
+}
+
+### Obtener la empresa vinculado al usuario 
+GET http://localhost:5000/api/users/company
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
 
 
 
@@ -85,5 +104,17 @@ Content-Type: multipart/form-data
   "userId": "{{UserId}}",
   "image": "image.png"
 }
+
+
+### Archivar usuario loggeado
+PATCH http://localhost:5000/api/users/archive
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+
+### Desarchivar usuario loggeado
+PATCH http://localhost:5000/api/users/restore
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
 
 

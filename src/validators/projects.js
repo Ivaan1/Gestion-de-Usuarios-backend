@@ -1,6 +1,12 @@
 const { check } = require("express-validator");
 const validateResults = require("../utils/handleValidator");
 
+const validatorGetProject = [
+  check("id").exists().notEmpty().isMongoId().withMessage("El id es obligatorio"),
+  (req, res, next) => validateResults(req, res, next),
+];  
+
+
 const validatorCreateProject = [
   check("name").notEmpty().withMessage("El nombre es obligatorio"),
   check("projectCode").notEmpty().withMessage("El identificador del proyecto es obligatorio"),
@@ -41,4 +47,5 @@ const validatorUpdateProject = [
 module.exports = {
     validatorCreateProject,
     validatorUpdateProject,
+    validatorGetProject
     };

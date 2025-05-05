@@ -61,6 +61,5 @@ const clientSchema = new mongoose.Schema({
     }
 }, { timestamps: true }) // Usar timestamps para createdAt y updatedAt
 
-const Client = mongoose.model('client', clientSchema)
 
-module.exports = Client
+module.exports = mongoose.model('client', clientSchema)

@@ -2,8 +2,8 @@ const express = require("express")
 const router = express.Router()
 
 // Controladores para manejar las rutas
-const { getClients, getClient, createClient, archiveClient, getArchivedClients, deleteClient, restoreClient, updateClient } = require("../controllers/client")
-const { validatorCreateClient, validatorGetClient, validatorUpdateClient } = require('../validators/client')
+const { getClients, getClient, createClient, archiveClient, getArchivedClients, deleteClient, restoreClient, updateClient } = require("../controllers/clients")
+const { validatorCreateClient, validatorGetClient, validatorUpdateClient } = require('../validators/clients')
 const authMiddleWare = require("../middleware/sessions")
 
 // OBTENER TODOS los clientes relacionados a la cuenta de usuario

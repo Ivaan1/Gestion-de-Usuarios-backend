@@ -1,4 +1,4 @@
-const { usersModel } = require('../models');
+const { usersModel, companyModel } = require('../models');
 const { handleHttpError } = require ('../utils/handleErrors')
 const { uploadToPinata } = require('../utils/handleUploadIPFS')
 const { matchedData } = require('express-validator')
@@ -33,13 +33,21 @@ async function getUsers(req, res) {
 async function getUser(req, res) {
     try {
         const id = req.params.id;
-        const dato = await usersModel.findById(id);
-
-        if (!dato) {
+        const user = await usersModel.findById(id)
+        if (!user) {
             return res.status(400).send('Usuario no encontrado');
         }
 
-        res.send({ dato });
+        let populatedUser;
+        if (user.companyId) {
+            populatedUser = await usersModel.findById(id)
+                .populate('companyId', 'name address')
+                .lean();
+        } else {
+            populatedUser = user.toObject(); // Convertir a objeto plano
+        }
+
+        res.send({ data: populatedUser });
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al obtener el usuario');
@@ -170,7 +178,7 @@ async function deleteLoggedUser(req, res) {
     }
 }
 
-
+// @deprecated
 async function updateUserAddress(req, res) {
     try {
         const { id, ...body } = matchedData(req)
@@ -182,6 +190,65 @@ async function updateUserAddress(req, res) {
     }
 }
 
+async function getCompany(req, res) {
+    try {
+        const { id } = req.user; // Obtener el ID del usuario del token
+
+        const usercompany = await companyModel.findOne({ users: id });
+
+        if (!id) {
+            return res.status(404).send('Usuario no encontrado'); // Manejar el error si el usuario no se encuentra
+        }
+        if (!usercompany) {
+            return res.status(404).send('Este usuario no esta vinculado con ninguna empresa'); // Manejar el error si la empresa no se encuentra
+        }
+        
+        res.send({ usercompany }); // Enviar la respuesta con la empresa
+    } catch (error) {
+        console.error(error); // Imprimir el error en la consola
+        res.status(500).send('Error al obtener la empresa del usuario'); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
+async function addCompany(req, res) {
+    try {
+        const { id } = req.user; // Obtener el ID del usuario del token
+        const data = matchedData(req); // Obtener el cuerpo de la empresa
+        const user = await usersModel.findById(id); // Buscar el usuario por ID
+        
+        if (!user) {
+            return res.status(404).send('Usuario no encontrado'); // Manejar el error si el usuario no se encuentra
+        }
+        if (user.companyId) {
+            return res.status(400).send('Este usuario ya tiene una empresa vinculada'); // Manejar el error si el usuario ya tiene una empresa vinculada
+        }
+        
+        const usercompany = await companyModel.create(data);
+
+        // Vincular la empresa al usuario
+        user.companyId = usercompany._id; // Asignar el ID de la empresa al campo companyId del usuario
+
+        const companyId = usercompany._id; // Obtener el ID de la empresa creada
+        // Vincular el usuario a la empresa
+        await companyModel.findByIdAndUpdate(
+            companyId, 
+            { $push: { users: id } } // userId es el ObjectId del usuario a agregar
+          );
+
+        await usercompany.save(); // Guardar la empresa con el usuario vinculado
+        await user.save(); // Guardar el usuario con la empresa vinculada
+
+        const updatedCompany = await companyModel.findById(usercompany._id);
+
+        res.status(201).send({ data: updatedCompany }); // Enviar la respuesta con la empresa creada
+
+    } catch (error) {
+        console.error(error); // Imprimir el error en la consola
+        res.status(500).send('Error al agregar la empresa al usuario'); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
+
 module.exports = {
     getUsers,
     getUser,
@@ -191,6 +258,8 @@ module.exports = {
     uploadImage,
     updateUser,
     deleteLoggedUser,
-    updateUserAddress
+    updateUserAddress,
+    getCompany,
+    addCompany
     // Puedes agregar más funciones según sea necesario
 };

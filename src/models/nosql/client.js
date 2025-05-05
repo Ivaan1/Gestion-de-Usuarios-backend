@@ -35,6 +35,11 @@ const clientSchema = new mongoose.Schema({
         required: true,
         ref: 'user' // Referencia al modelo de usuario
     },
+    companyId: { // ID de la empresa asociada
+        type: mongoose.Schema.Types.ObjectId,
+        required: false, // Puede ser opcional si el usuario no está asociado a una empresa
+        ref: 'company'
+    },
     name: { // Nombre del cliente
         type: String,
         required: true

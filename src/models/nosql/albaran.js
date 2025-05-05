@@ -6,6 +6,11 @@ const albaranSchema = new mongoose.Schema({
         required: true, 
         ref: 'users' 
     },
+    companyId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        required: false, // Puede ser opcional si el usuario no está asociado a una empresa
+        ref: 'companies' 
+    },
     clientId: { 
         type: mongoose.Schema.Types.ObjectId, 
         required: true, 

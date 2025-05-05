@@ -26,7 +26,7 @@ const addressSchema = new mongoose.Schema({
 }, { _id: false }) // No queremos un _id para la dirección
 
 
-const UserScheme = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
     {
         name: {
             type: String,
@@ -82,7 +82,7 @@ const UserScheme = new mongoose.Schema(
         companyId: { // ID de la empresa asociada
             type: mongoose.Schema.Types.ObjectId,
             required: false,
-            ref: 'company' 
+            ref: 'companies' 
         },
     },
     {
@@ -90,4 +90,4 @@ const UserScheme = new mongoose.Schema(
         versionKey: false
     }
 )
-module.exports = mongoose.model("users", UserScheme) // “users” es el nombre de la colección en mongoDB (o de la tabla en SQL)
+module.exports = mongoose.model("users", userSchema) // “users” es el nombre de la colección en mongoDB (o de la tabla en SQL)

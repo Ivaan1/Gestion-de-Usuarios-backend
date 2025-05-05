@@ -12,13 +12,12 @@ const validatorCreateClient = [
     check("address.postal").exists().isNumeric().withMessage("El código postal debe ser numérico"),
     check("address.city").exists().notEmpty().withMessage("La ciudad es obligatoria"),
     check("address.province").exists().notEmpty().withMessage("La provincia es obligatoria"),
-    check("deleted").optional().isBoolean().withMessage("El campo 'deleted' debe ser un booleano"),
     (req, res, next) => {
         validateResults(req, res, next)
     }
 ]
 
-//validator para obtener un cliente por ID
+// validator para manejar a un cliente por ID
 const validatorGetClient = [
     check("id").exists().notEmpty().isMongoId().withMessage("El id es obligatorio"),
     (req, res, next) => {
@@ -26,7 +25,23 @@ const validatorGetClient = [
     }
 ]
 
+// Validator para actualizar un cliente
+const validatorUpdateClient = [
+  check("id").exists().isMongoId(),
+  check("name").optional().isString().notEmpty(),
+  check("email").optional().isEmail(),
+  check("cif").optional().isString().notEmpty(),
+  check("address.street").optional().isString(),
+  check("address.number").optional().isNumeric(),
+  check("address.postal").optional().isNumeric(),
+  check("address.city").optional().isString(),
+  check("address.province").optional().isString(),
+  check("activeProjects").optional().isNumeric(),
+  check("pendingDeliveryNotes").optional().isNumeric(),
+];
+
 module.exports = { 
     validatorCreateClient,
-    validatorGetClient
+    validatorGetClient,
+    validatorUpdateClient
 }

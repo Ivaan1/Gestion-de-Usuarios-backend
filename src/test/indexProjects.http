@@ -45,7 +45,7 @@ Content-Type: application/json
 
 
 ### Guardar manualmente el ID del proyecto
-@projectId = 6818115d7ad6d0bcbbe90319
+@projectId = 6818180be770f99d4a99411a
 
 ### Actualizar un proyecto por ID
 PUT http://localhost:5000/api/projects/{{projectId}}
@@ -54,7 +54,26 @@ Content-Type: application/json
 
 {
   "name": "Nombre del proyecto actualizado",
-  "notes": "Notas del proyecto",
+  "notes": "Notas del proyecto"
 }
 
+### Obtener un proyecto por ID
+GET http://localhost:5000/api/projects/{{projectId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
 
+
+### Archivar un proyecto por ID
+PATCH http://localhost:5000/api/projects/archive/{{projectId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### Desarchivar un proyecto por ID
+PATCH http://localhost:5000/api/projects/restore/{{projectId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### Eliminar un proyecto por ID
+DELETE http://localhost:5000/api/projects/{{projectId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json

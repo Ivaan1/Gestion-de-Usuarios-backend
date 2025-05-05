@@ -85,3 +85,5 @@ Content-Type: multipart/form-data
   "userId": "{{UserId}}",
   "image": "image.png"
 }
+
+

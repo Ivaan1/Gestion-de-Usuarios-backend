@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // Controladores para manejar las rutas
-const { getUsers, getUser, createUsers, deleteUser, deleteAllUsers, uploadImage, updateUser } = require("../controllers/users");
+const { getUsers, getUser, createUsers, deleteUser, deleteAllUsers, uploadImage, updateUser, updateUserAddress } = require("../controllers/users");
 const { validatorGetUser, validatorCreateUser, validatorUpdateUser } = require('../validators/users')
 const authMiddleWare = require("../middleware/sessions")
 const { uploadMiddlewareMemory } = require("../utils/handleStorage")
@@ -230,6 +230,9 @@ router.patch("/image", authMiddleWare, uploadMiddlewareMemory.single("image"), u
  *         description: Server error
  */
 router.patch("/:id", authMiddleWare, validatorGetUser, validatorUpdateUser, updateUser)
+
+
+router.patch("/address", authMiddleWare, updateUserAddress)
 
 
 module.exports = router;

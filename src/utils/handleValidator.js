@@ -5,14 +5,22 @@ const { validationResult } = require("express-validator");
 // Se define una función llamada 'validateResults', que será un middleware de Express.
 const validateResults = (req, res, next) => {
     try {
-        // 'validationResult(req)' obtiene los resultados de la validación de los datos
-        // que se han validado previamente en la ruta usando 'express-validator'.
-        // 'throw()' lanza un error si se encuentra algún problema con los datos validados.
-        validationResult(req).throw();
-        
-        // Si la validación es exitosa (no lanza error), se pasa al siguiente middleware
-        // o a la siguiente función en la cadena con 'next()'.
-        return next();
+        // Obtenemos los resultados de la validación
+        const result = validationResult(req);
+
+        // Imprimir el resultado de la validación para depuración
+        console.log("Validation Result: ", result);
+
+        // Verificamos si hay errores de validación
+        if (!result.isEmpty()) {
+            // Si hay errores, lanzamos un error y los enviamos al cliente
+            res.status(400).send({
+                errors: result.array() // Enviamos los errores como un array
+            });
+        } else {
+            // Si no hay errores, continuamos con el siguiente middleware
+            return next();
+        }
     } catch (err) {
         // Si ocurre un error (es decir, si la validación falla), se captura en 'catch'
         // y se responde al cliente con un código de estado 403 (Forbidden).

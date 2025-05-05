@@ -43,10 +43,18 @@ const albaranSchema = new mongoose.Schema({
         type: String, 
         default: null // Ruta o archivo de la firma, opcional
     },
+    signed: {
+        type: Boolean, 
+        default: false // Indica si el albarán ha sido firmado
+    },
     pending: { 
         type: Boolean, 
         default: true 
-    }
+    },
+    pdfUrl: { 
+        type: String, 
+        default: null // URL del PDF generado, opcional
+    },
 }, {
     timestamps: true // Esto agrega automáticamente createdAt y updatedAt
 });

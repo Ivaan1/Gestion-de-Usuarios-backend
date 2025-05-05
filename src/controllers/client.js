@@ -12,9 +12,8 @@ const { matchedData } = require('express-validator')
 async function getClients(req, res) {
     try {
         const { id } = req.user; // ID extraído del token 
-        console.log(id)
+        
         const data = await clientModel.find({ userId: id }); // Buscar clientes por userId
-        console.log(data)
         
         if (!data || data.length === 0) {
             return res.status(400).send('Este usuario no tiene clientes registrados');
@@ -90,6 +89,58 @@ async function getArchivedClients(req, res) {
     }
 }
 
+async function deleteClient(req, res) {
+    try {
+        const { id } = req.params; // ID del cliente a eliminar
+        const client = await clientModel.findById(id); // Buscar cliente por ID
+        
+        if (!client) {
+            return res.status(404).send('Cliente no encontrado');
+        }
+        
+        await clientModel.findByIdAndDelete(id); // Eliminar cliente
+        res.send({ message: 'Cliente eliminado' });
+    } catch (error) {
+        console.log(error);
+        handleHttpError(res, 'ERROR_DELETE_CLIENT', 500);
+    }
+}
+
+async function restoreClient(req, res) {
+    try {
+        const { id } = req.params; // ID del cliente a restaurar
+        const client = await clientModel.findById(id); // Buscar cliente por ID
+        
+        if (!client) {
+            return res.status(404).send('Cliente no encontrado');
+        }
+        
+        const restoredClient = await clientModel.findByIdAndUpdate(id, { deleted: false }, { new: true }); // Restaurar cliente
+        res.send({ data: restoredClient });
+    } catch (error) {
+        console.log(error);
+        handleHttpError(res, 'ERROR_RESTORE_CLIENT', 500);
+    }
+}
+
+async function updateClient(req, res) {
+    try {
+        const { id } = req.params; // ID del cliente a actualizar
+        const data = matchedData(req); // Extraer los datos del cuerpo de la solicitud
+        
+        const client = await clientModel.findByIdAndUpdate(id, data, { new: true }); // Actualizar cliente
+        
+        console.log(client)
+        if (!client) {
+            return res.status(404).send('Cliente no encontrado');
+        }
+        
+        res.send({ data: client });
+    } catch (error) {
+        console.log(error);
+        handleHttpError(res, 'ERROR_UPDATE_CLIENT', 500);
+    }
+}
 
 
 module.exports = { 
@@ -98,8 +149,7 @@ module.exports = {
     getClient,
     archiveClient,
     getArchivedClients,
-    // updateClient,
-    // deleteClient,
-    // getClients,
-    // getClientById
+    deleteClient,
+    restoreClient,
+    updateClient
 }

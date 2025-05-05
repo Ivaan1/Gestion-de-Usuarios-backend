@@ -79,14 +79,80 @@ async function getProjects(req, res) {
     }
 }
 
+async function getProject(req, res) {
+    try {
+        const { id } = req.params; // Obtener el ID del proyecto de los parámetros de la solicitud
+
+        const project = await projectModel.findById(id); // Buscar el proyecto por ID
+
+        if (!project) {
+            return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); // Manejar el error si el proyecto no se encuentra
+        }
+
+        res.status(200).send({ data: project }); // Enviar la respuesta con el proyecto encontrado
+    } catch (error) {
+        console.log(error); // Imprimir el error en la consola
+        handleHttpError(res, 'ERROR_GET_PROJECT', 500); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
+async function archiveProject(req, res) {
+    try {
+        const { id } = req.params; // Obtener el ID del proyecto de los parámetros de la solicitud
+
+        const project = await projectModel.findByIdAndUpdate(id, { deleted: true }, { new: true }); // Archivar el proyecto (soft delete)
+
+        if (!project) {
+            return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); // Manejar el error si el proyecto no se encuentra
+        }
+
+        res.status(200).send({ data: project }); // Enviar la respuesta con el proyecto archivado
+    } catch (error) {
+        console.log(error); // Imprimir el error en la consola
+        handleHttpError(res, 'ERROR_ARCHIVE_PROJECT', 500); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
+async function restoreProject(req, res) {
+    try {
+        const { id } = req.params; // Obtener el ID del proyecto de los parámetros de la solicitud
+
+        const project = await projectModel.findByIdAndUpdate(id, { deleted: false }, { new: true }); // Restaurar el proyecto (soft delete)
+
+        if (!project) {
+            return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); // Manejar el error si el proyecto no se encuentra
+        }
+
+        res.status(200).send({ data: project }); // Enviar la respuesta con el proyecto restaurado
+    } catch (error) {
+        console.log(error); // Imprimir el error en la consola
+        handleHttpError(res, 'ERROR_RESTORE_PROJECT', 500); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
+async function deleteProject(req, res) {
+    try {
+        const { id } = req.params; // Obtener el ID del proyecto de los parámetros de la solicitud
+
+        const project = await projectModel.findByIdAndDelete(id); // Eliminar el proyecto (hard delete)
+
+        if (!project) {
+            return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); // Manejar el error si el proyecto no se encuentra
+        }
+
+        res.send({ message: 'Proyecto eliminado' });
+    } catch (error) {
+        console.log(error); // Imprimir el error en la consola
+        handleHttpError(res, 'ERROR_DELETE_PROJECT', 500); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
 module.exports = {
     createProject,
     updateProject,
     getProjects,
-    /** 
     getProject,
     archiveProject,
     restoreProject,
-    deleteProject,*/
-    // Otros controladores de proyectos pueden ir aquí
+    deleteProject
 };

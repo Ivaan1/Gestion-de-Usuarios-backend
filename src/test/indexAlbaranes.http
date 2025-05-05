@@ -1,0 +1,42 @@
+#### Inicio de sesión de usuario
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "test@example.com",
+  "password" : "password123"
+}
+
+### Guardar manualmente el token (Reemplaza despues del login)
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQwNDgzMSwiZXhwIjoxNzU2NzcyODMxfQ.cnPwaO0gFgmywjNtRlvvRCi0DmvhK3-wNwqWIPqLUzQ
+
+### Obtener algun client ID
+GET http://localhost:5000/api/clients
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+
+### Guardar manualmente el ID del cliente
+@clientId = 6817fc381d7d0dea0a8bc4e3
+
+### Obtener un proyecto del Client por ID 
+GET http://localhost:5000/api/clients/{{clientId}}/projects
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### Guardar manualmente el ID del proyecto
+@projectId = 681823c55e2a03017cd240cb
+
+### Crear un nuevo Albarán
+POST http://localhost:5000/api/albaranes
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "projectId": "{{projectId}}",
+  "clientId": "{{clientId}}",
+  "description": "Descripción del albarán",
+  "format": "material",
+  "material": "type of material",  //si el format fuera "hours" se pondria "hours" en vez de "material"
+  "workdate": "2023-10-01"
+}

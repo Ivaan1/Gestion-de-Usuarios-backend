@@ -1,0 +1,60 @@
+### Inicio de sesión de usuario
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "test@example.com",
+  "password" : "password123"
+}
+
+### Guardar manualmente el token (Reemplaza despues del login)
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQwNDgzMSwiZXhwIjoxNzU2NzcyODMxfQ.cnPwaO0gFgmywjNtRlvvRCi0DmvhK3-wNwqWIPqLUzQ
+
+### Obtener algun client ID
+GET http://localhost:5000/api/clients
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+
+### Guardar manualmente el ID del cliente
+@clientId = 6818065f99d3cda17ec9af06
+
+### Crear un nuevo proyecto
+POST http://localhost:5000/api/projects
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Nombre del proyecto",
+  "projectCode": "ABC1233",
+  "address": {
+    "street": "Carlos V",
+    "number": 22,
+    "postal": 28936,
+    "city": "Móstoles",
+    "province": "Madrid"
+  },
+  "code": "INT-CODE-999",
+  "clientId": "{{clientId}}"
+}
+
+###Obtenemos todos los proyectos del USUARIO
+GET http://localhost:5000/api/projects
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+
+### Guardar manualmente el ID del proyecto
+@projectId = 6818115d7ad6d0bcbbe90319
+
+### Actualizar un proyecto por ID
+PUT http://localhost:5000/api/projects/{{projectId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "Nombre del proyecto actualizado",
+  "notes": "Notas del proyecto",
+}
+
+

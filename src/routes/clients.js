@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 
 // Controladores para manejar las rutas
-const { getClients, getClient, createClient, archiveClient, getArchivedClients, deleteClient, restoreClient, updateClient } = require("../controllers/clients")
+const { getClients, getClient, createClient, archiveClient, getArchivedClients, deleteClient, restoreClient, updateClient, getProjectOfClient } = require("../controllers/clients")
 const { validatorCreateClient, validatorGetClient, validatorUpdateClient } = require('../validators/clients')
 const authMiddleWare = require("../middleware/sessions")
 
@@ -30,5 +30,7 @@ router.delete("/:id", authMiddleWare, validatorGetClient, deleteClient)
 // OBTENER un CLIENTE por ID relacionado a la cuenta de usuario
 router.get("/:id", authMiddleWare, validatorGetClient, getClient)
 
+//OBTENER los PROYECTOS de un CLIENTE
+router.get("/:id/projects", authMiddleWare, validatorGetClient, getProjectOfClient)
 
 module.exports = router;

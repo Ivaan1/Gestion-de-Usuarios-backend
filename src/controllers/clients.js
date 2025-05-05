@@ -1,4 +1,4 @@
-const { clientModel } = require('../models'); 
+const { clientModel, projectModel } = require('../models'); 
 const { handleHttpError } = require('../utils/handleErrors')
 const { matchedData } = require('express-validator')
 
@@ -143,6 +143,29 @@ async function updateClient(req, res) {
 }
 
 
+async function getProjectOfClient(req, res) {
+    try {
+        const { id } = req.params; // ID del cliente a buscar
+        const client = await clientModel.findById(id); // Buscar cliente por ID
+        
+        if (!client) {
+            return res.status(404).send('Cliente no encontrado');
+        }
+        
+        const projects = await projectModel.find({ clientId: id }); // Buscar proyectos relacionados al cliente
+        
+        if (!projects || projects.length === 0) {
+            return res.status(400).send('Este cliente no tiene proyectos registrados');
+        }
+        
+        res.send({ data: projects });
+    } catch (error) {
+        console.log(error);
+        handleHttpError(res, 'ERROR_GET_PROJECTS_OF_CLIENT', 500);
+    }
+}
+
+
 module.exports = { 
     getClients,
     createClient,
@@ -151,5 +174,6 @@ module.exports = {
     getArchivedClients,
     deleteClient,
     restoreClient,
-    updateClient
+    updateClient,
+    getProjectOfClient
 }

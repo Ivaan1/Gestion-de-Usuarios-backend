@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { createAlbaran, getAlbaranes, getAlbaran, generatePDF, downloadPDF, uploadSign } = require('../controllers/albaranes');
+const { createAlbaran, getAlbaranes, getAlbaran, generatePDF, downloadPDF, uploadSign, deleteAlbaran } = require('../controllers/albaranes');
 const { validatorCreateAlbaran, validatorGetAlbaran } = require('../validators/albaranes');
 const authMiddleWare = require('../middleware/sessions');
 const { uploadMiddlewareMemory } = require("../utils/handleStorage")
@@ -15,6 +15,6 @@ router.patch('/sign/:id', authMiddleWare, validatorGetAlbaran, uploadMiddlewareM
 
 router.get('/:id', authMiddleWare, validatorGetAlbaran, getAlbaran)
 
-
+router.delete('/:id', authMiddleWare, validatorGetAlbaran, deleteAlbaran)
 
 module.exports = router;

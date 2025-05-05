@@ -130,7 +130,6 @@ async function updateClient(req, res) {
         
         const client = await clientModel.findByIdAndUpdate(id, data, { new: true }); // Actualizar cliente
         
-        console.log(client)
         if (!client) {
             return res.status(404).send('Cliente no encontrado');
         }

@@ -78,7 +78,12 @@ const UserScheme = new mongoose.Schema(
         deleted: { // Usuario eliminado
             type: Boolean,
             default: false
-        }
+        },
+        companyId: { // ID de la empresa asociada
+            type: mongoose.Schema.Types.ObjectId,
+            required: false,
+            ref: 'company' 
+        },
     },
     {
         timestamp: true, 

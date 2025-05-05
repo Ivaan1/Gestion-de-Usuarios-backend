@@ -11,11 +11,6 @@ Content-Type: application/json
 @auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQwMTI2MiwiZXhwIjoxNzU2NzY5MjYyfQ.uR1owdtD8wTi-lvAtXZs2xyzA4xsILTvtAaMmHF01vc
 @userID = 67eb0e6bfdd8ffae9ac70ab6
 
-### Listar todos los clientes o empresas relacionados con el usuario
-GET http://localhost:5000/api/clients
-Content-Type: application/json
-Authorization: Bearer {{auth_token}}
-
 
 ### Crear nuevo cliente o empresa
 POST http://localhost:5000/api/clients
@@ -35,15 +30,28 @@ Authorization: Bearer {{auth_token}}
     "province": "Madrid"
   }
 }
-###
+### Guardar manualmente el ID del cliente
+@ClientId = 6817fc381d7d0dea0a8bc4e3
 
-@ClientId = 6817f56124cc89dcdcc02ad9
+### Actualizar un cliente por ID
+PUT http://localhost:5000/api/clients/{{ClientId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "EJEMPLO",
+  "pendingDeliveryNotes": 2
+}
 
 ### Obtener un cliente por ID 
 GET http://localhost:5000/api/clients/{{ClientId}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
+### Listar todos los clientes o empresas relacionados con el usuario
+GET http://localhost:5000/api/clients
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
 
 ### Archivar un cliente por ID
 DELETE  http://localhost:5000/api/clients/archive/{{ClientId}}
@@ -52,6 +60,16 @@ Content-Type: application/json
 
 ### Obtener todos los clientes archivados
 GET http://localhost:5000/api/clients/archive
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+### Desarchivar un cliente por ID
+PATCH http://localhost:5000/api/clients/restore/{{ClientId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### Eliminar un cliente por ID
+DELETE http://localhost:5000/api/clients/{{ClientId}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 

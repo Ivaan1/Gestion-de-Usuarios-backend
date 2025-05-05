@@ -1,4 +1,4 @@
-const { albaranModel, projectModel, clientModel }= require('../models'); 
+const { albaranModel, projectModel, clientModel, usersModel }= require('../models'); 
 const { handleHttpError } = require('../utils/handleErrors'); 
 const { matchedData } = require('express-validator')
 const { generateAlbaranPDF, saveAlbaranPDF } = require('../services/pdfGenerator'); 
@@ -86,7 +86,7 @@ async function getAlbaran(req, res) {
         const { id } = req.params; // ID del albarán extraído de los parámetros de la solicitud
         
         const albaran = await albaranModel.findById(id)
-            .populate('userId', 'name email address') 
+            .populate('userId', 'email address') 
             .populate('clientId', 'name address cif') 
             .populate('projectId', 'name projectCode');
 

@@ -12,15 +12,17 @@ const validatorCreateAlbaran = [
 
     check('format')
         .exists().withMessage("El formato es obligatorio")
-        .isIn(["material", "hours"]).withMessage("El formato debe ser 'material' o 'hours'"),
+        .isIn(["materials", "hours"]).withMessage("El formato debe ser 'materials' o 'hours'"),
 
-    check('material')
+    check('materials')
         .optional({ checkFalsy: true })
-        .isString().withMessage("El material debe ser una cadena de texto"),
+        .isArray().withMessage("El material debe ser un arreglo")
+        .custom((value) => value.every(item => typeof item === 'string')).withMessage("Cada material debe ser una cadena de texto"),
 
     check('hours')
         .optional({ checkFalsy: true })
-        .isNumeric().withMessage("Las horas deben ser un número"),
+        .isArray().withMessage("Las horas deben ser un arreglo")
+        .custom((value) => value.every(item => typeof item === 'number')).withMessage("Cada hora debe ser un número"),
 
     check('description')
         .exists().withMessage("La descripción es obligatoria")
@@ -44,6 +46,17 @@ const validatorCreateAlbaran = [
     }
 ];
 
+const validatorGetAlbaran = [
+    check('id')
+        .exists().withMessage('El ID del albarán es obligatorio')
+        .isMongoId().withMessage('El ID del albarán debe ser un ID de MongoDB válido'),
+
+    (req, res, next) => {
+        validateResults(req, res, next);  // Asegúrate de que validateResults esté bien configurado
+    }
+];
+
 module.exports = {
-    validatorCreateAlbaran
+    validatorCreateAlbaran,
+    validatorGetAlbaran
 };

@@ -249,6 +249,42 @@ async function addCompany(req, res) {
 }
 
 
+async function archiveUser(req, res) {
+    try {
+        const { id } = req.user; // ID del usuario a archivar
+        const user = await usersModel.findById(id); // Buscar usuario por ID
+
+        if (!user) {
+            return res.status(404).send('Usuario no encontrado'); // Manejar el error si el usuario no se encuentra
+        }
+
+        const archivedUser = await usersModel.findByIdAndUpdate(id, { deleted: true }, { new: true }); // Archivar usuario
+        res.send({ data: archivedUser }); // Enviar la respuesta con el usuario archivado
+    } catch (error) {
+        console.log(error); // Imprimir el error en la consola
+        handleHttpError(res, 'ERROR_ARCHIVE_USER', 500); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
+
+async function restoreUser(req, res) {
+    try {
+        const { id } = req.user; // ID del usuario a restaurar
+        const user = await usersModel.findById(id); // Buscar usuario por ID
+
+        if (!user) {
+            return res.status(404).send('Usuario no encontrado'); // Manejar el error si el usuario no se encuentra
+        }
+
+        const restoredUser = await usersModel.findByIdAndUpdate(id, { deleted: false }, { new: true }); // Restaurar usuario
+        res.send({ data: restoredUser }); // Enviar la respuesta con el usuario restaurado
+    } catch (error) {
+        console.log(error); // Imprimir el error en la consola
+        handleHttpError(res, 'ERROR_RESTORE_USER', 500); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
+
 module.exports = {
     getUsers,
     getUser,
@@ -260,6 +296,8 @@ module.exports = {
     deleteLoggedUser,
     updateUserAddress,
     getCompany,
-    addCompany
+    addCompany,
+    archiveUser,
+    restoreUser
     // Puedes agregar más funciones según sea necesario
 };

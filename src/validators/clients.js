@@ -27,7 +27,6 @@ const validatorGetClient = [
 
 // Validator para actualizar un cliente
 const validatorUpdateClient = [
-  check("id").exists().isMongoId(),
   check("name").optional().isString().notEmpty(),
   check("email").optional().isEmail(),
   check("cif").optional().isString().notEmpty(),

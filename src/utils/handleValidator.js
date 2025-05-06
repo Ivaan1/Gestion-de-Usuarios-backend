@@ -8,9 +8,6 @@ const validateResults = (req, res, next) => {
         // Obtenemos los resultados de la validación
         const result = validationResult(req);
 
-        // Imprimir el resultado de la validación para depuración
-        console.log("Validation Result: ", result);
-
         // Verificamos si hay errores de validación
         if (!result.isEmpty()) {
             // Si hay errores, lanzamos un error y los enviamos al cliente

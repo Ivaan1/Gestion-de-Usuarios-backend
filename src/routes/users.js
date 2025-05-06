@@ -6,27 +6,27 @@ const { getUsers, archiveUser, getUser, deleteUser, deleteAllUsers, uploadImage,
 const { validatorGetUser, validatorUpdateUser, validatorAddCompany } = require('../validators/users')
 const authMiddleWare = require("../middleware/sessions")
 const { uploadMiddlewareMemory } = require("../utils/handleStorage")
+const { validateUserMiddleware } = require("../middleware/validated")
 
+router.get("/", authMiddleWare, validateUserMiddleware, getUsers);
 
-router.get("/", authMiddleWare, getUsers);
+router.delete("/",authMiddleWare,validateUserMiddleware, deleteAllUsers)
 
-router.delete("/",authMiddleWare, deleteAllUsers)
+router.patch ("/", authMiddleWare, validatorUpdateUser,validateUserMiddleware, updateUser)
 
-router.patch ("/", authMiddleWare, validatorUpdateUser, updateUser)
+router.get("/company", authMiddleWare,validateUserMiddleware, getCompany)
 
-router.get("/company", authMiddleWare, getCompany)
+router.patch("/company", authMiddleWare,validatorAddCompany,validateUserMiddleware, addCompany)
 
-router.patch("/company", authMiddleWare,validatorAddCompany, addCompany)
+router.patch("/archive", authMiddleWare,validateUserMiddleware, archiveUser)
 
-router.patch("/archive", authMiddleWare, archiveUser)
+router.patch("/restore", authMiddleWare,validateUserMiddleware, restoreUser)
 
-router.patch("/restore", authMiddleWare, restoreUser)
+router.patch("/image", authMiddleWare,validateUserMiddleware, uploadMiddlewareMemory.single("image"), uploadImage)
 
-router.patch("/image", authMiddleWare, uploadMiddlewareMemory.single("image"), uploadImage)
+router.get("/:id", authMiddleWare, validatorGetUservalidateUserMiddleware, getUser)
 
-router.get("/:id", authMiddleWare, validatorGetUser, getUser)
-
-router.delete("/:id", authMiddleWare, validatorGetUser, deleteUser)
+router.delete("/:id", authMiddleWare, validatorGetUser,validateUserMiddleware, deleteUser)
 
 
 

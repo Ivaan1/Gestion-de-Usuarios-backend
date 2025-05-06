@@ -4,20 +4,22 @@ const router = express.Router();
 const { createProject, updateProject, getProjects, getProject, archiveProject, restoreProject, deleteProject, getProjectOfClient } = require("../controllers/projects")
 const { validatorCreateProject, validatorUpdateProject, validatorGetProject } = require('../validators/projects')
 const authMiddleWare = require("../middleware/sessions");
-const { validatorGetClient } = require('../validators/clients');
+const { validateUserMiddleware } = require("../middleware/validated")
 
-router.get("/", authMiddleWare, getProjects) 
 
-router.post("/", authMiddleWare, validatorCreateProject, createProject)
 
-router.patch("/archive/:id", authMiddleWare, validatorGetProject, archiveProject) 
+router.get("/", authMiddleWare,validateUserMiddleware, getProjects) 
 
-router.patch("/restore/:id", authMiddleWare, validatorGetProject, restoreProject)
+router.post("/", authMiddleWare, validatorCreateProject,validateUserMiddleware, createProject)
 
-router.get("/:id", authMiddleWare, validatorGetProject, getProject)
+router.patch("/archive/:id", authMiddleWare, validatorGetProject,validateUserMiddleware, archiveProject) 
 
-router.put("/:id", authMiddleWare, validatorUpdateProject, updateProject) 
+router.patch("/restore/:id", authMiddleWare, validatorGetProject,validateUserMiddleware, restoreProject)
 
-router.delete("/:id", authMiddleWare, validatorGetProject, deleteProject) 
+router.get("/:id", authMiddleWare, validatorGetProject,validateUserMiddleware, getProject)
+
+router.put("/:id", authMiddleWare, validatorUpdateProject,validateUserMiddleware, updateProject) 
+
+router.delete("/:id", authMiddleWare, validatorGetProject,validateUserMiddleware, deleteProject) 
 
 module.exports = router;

@@ -3,18 +3,20 @@ const { createAlbaran, getAlbaranes, getAlbaran, generatePDF, downloadPDF, uploa
 const { validatorCreateAlbaran, validatorGetAlbaran } = require('../validators/albaranes');
 const authMiddleWare = require('../middleware/sessions');
 const { uploadMiddlewareMemory } = require("../utils/handleStorage")
+const { validateUserMiddleware } = require("../middleware/validated")
 
-router.post('/', authMiddleWare,validatorCreateAlbaran, createAlbaran)
 
-router.get('/', authMiddleWare, getAlbaranes)
+router.post('/', authMiddleWare,validatorCreateAlbaran,validateUserMiddleware, createAlbaran)
 
-router.patch('/pdf/:id', authMiddleWare, validatorGetAlbaran, generatePDF)
-router.get('/pdf/:id', authMiddleWare,validatorGetAlbaran, downloadPDF)
+router.get('/', authMiddleWare,validateUserMiddleware, getAlbaranes)
 
-router.patch('/sign/:id', authMiddleWare, validatorGetAlbaran, uploadMiddlewareMemory.single("image"), uploadSign)
+router.patch('/pdf/:id', authMiddleWare, validatorGetAlbaran,validateUserMiddleware, generatePDF)
+router.get('/pdf/:id', authMiddleWare,validatorGetAlbaran,validateUserMiddleware, downloadPDF)
 
-router.get('/:id', authMiddleWare, validatorGetAlbaran, getAlbaran)
+router.patch('/sign/:id', authMiddleWare, validatorGetAlbaran,validateUserMiddleware, uploadMiddlewareMemory.single("image"), uploadSign)
 
-router.delete('/:id', authMiddleWare, validatorGetAlbaran, deleteAlbaran)
+router.get('/:id', authMiddleWare, validatorGetAlbaran,validateUserMiddleware, getAlbaran)
+
+router.delete('/:id', authMiddleWare, validatorGetAlbaran,validateUserMiddleware, deleteAlbaran)
 
 module.exports = router;

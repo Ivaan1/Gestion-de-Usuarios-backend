@@ -24,7 +24,7 @@ router.patch("/restore", authMiddleWare,validateUserMiddleware, restoreUser)
 
 router.patch("/image", authMiddleWare,validateUserMiddleware, uploadMiddlewareMemory.single("image"), uploadImage)
 
-router.get("/:id", authMiddleWare, validatorGetUservalidateUserMiddleware, getUser)
+router.get("/:id", authMiddleWare, validatorGetUser, validateUserMiddleware, getUser)
 
 router.delete("/:id", authMiddleWare, validatorGetUser,validateUserMiddleware, deleteUser)
 

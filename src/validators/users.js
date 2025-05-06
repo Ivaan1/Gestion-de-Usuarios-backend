@@ -16,10 +16,13 @@ const validatorGetUser = [
 
 const validatorUpdateUser = [
     check("name").optional(),
-    check("role").optional(),
-    check("profilePicture").optional(),
     check("about").optional(),
     check("phone").optional(),
+    check("address.street").optional(),
+    check("address.number").optional(),
+    check("address.postal").optional(),
+    check("address.city").optional(),
+    check("address.province").optional(),
     (req, res, next) => validateResults(req, res, next)
 ];
 

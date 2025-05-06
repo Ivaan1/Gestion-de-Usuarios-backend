@@ -11,7 +11,7 @@ const dbConnect = () => {
     // Intenta conectar a la base de datos
     try {
         // Conexión a MongoDB usando la URI proporcionada
-        mongoose.connect(db_uri, { useNewUrlParser: true, useUnifiedTopology: true})
+        mongoose.connect(db_uri)
             .then(() => {
                 console.log("Conexión exitosa a la base de datos");
             })

@@ -17,7 +17,7 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Guardar manualmente el token (Reemplaza después de la primera ejecución)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE5MGYyZTAyOGU2YjhiNGU3Njc2YjUiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQ3Mjc2NSwiZXhwIjoxNzU2ODQwNzY1fQ.ZUskqGCbTfFwMthqcnX6eyBbfTHVRYVEY44uIpcFGWM
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE5NTM2MmZlNTIyZDg2OGZlMmI5NTEiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQ5MDIxMCwiZXhwIjoxNzU2ODU4MjEwfQ.Nl0O-EOsYPmuydH9XQahIHPqxEahsAFVkv9VKp5A5S4
 
 ### Validación usando el token almacenado
 POST http://localhost:5000/api/auth/validation
@@ -25,20 +25,29 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "code": 886682
+  "code": 8862682
 }
 ###
 @UserId = 68190f2e028e6b8b4e7676b5
 
-### Rellenar usuario 
-PATCH http://localhost:5000/api/users/{{UserId}}
+### Rellenar usuario loggeado
+PATCH http://localhost:5000/api/users
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
   "name": "Test User",
   "about": "This is a test user",
-  "phone": "+1234567890"
+  "phone": "+1234567890",
+  "nif": "12345678A",
+  "role" : "admin",
+  "address": {
+    "street": "Main St",
+    "number": 123,
+    "postal": 12345,
+    "city": "Test City",
+    "province": "Test Province"
+  }
 }
 
 ### Añadir una empresa al usuario
@@ -94,14 +103,13 @@ Content-Type: application/json
 DELETE http://localhost:5000/api/users/{{UserId}}
 Authorization: Bearer {{auth_token}} 
 
-### Usuarios: Subir foto (PATCH /api/users/photo)
+### Usuarios: Subir foto (PATCH /api/users/image)
 
-PATCH http://localhost:5000/api/users/photo
+PATCH http://localhost:5000/api/users/image
 Authorization: Bearer {{auth_token}}
 Content-Type: multipart/form-data
 
 {
-  "userId": "{{UserId}}",
   "image": "image.png"
 }
 
@@ -118,3 +126,21 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 
+### recuperar contraseña 
+### devuelve un token de recuperacion
+POST http://localhost:5000/api/auth/recovery
+Content-Type: application/json
+
+{
+  "email": "ivanmanuel1213@gmail.com"
+}
+
+
+###validar codigo de recuperacion
+POST http://localhost:5000/api/auth/validation
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "code": 8862682
+}

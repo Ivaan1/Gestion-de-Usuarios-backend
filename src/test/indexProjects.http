@@ -17,7 +17,7 @@ Content-Type: application/json
 
 
 ### Guardar manualmente el ID del cliente
-@clientId = 6818065f99d3cda17ec9af06
+@clientId = 6817fc381d7d0dea0a8bc4e3
 
 ### Crear un nuevo proyecto
 POST http://localhost:5000/api/projects

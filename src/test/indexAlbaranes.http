@@ -36,7 +36,38 @@ Content-Type: application/json
   "projectId": "{{projectId}}",
   "clientId": "{{clientId}}",
   "description": "Descripción del albarán",
-  "format": "material",
-  "material": "type of material",  //si el format fuera "hours" se pondria "hours" en vez de "material"
+  "format": "materials",
+  "materials": ["Material 1", "Material 2"],
   "workdate": "2023-10-01"
 }
+
+### Obtener todos los albaranes del USUARIO
+GET http://localhost:5000/api/albaranes
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### Guardar manualmente el ID del albarán
+@albaranId = 6818946e00930a9d31c7f6d6
+
+### Obtener un albarán por ID
+GET http://localhost:5000/api/albaranes/{{albaranId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### GENERAR un PDF del albarán por ID
+PATCH  http://localhost:5000/api/albaranes/pdf/{{albaranId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+### Firmar un Albaran por ID 
+PATCH http://localhost:5000/api/albaranes/sign/{{albaranId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "image": "file.png"
+}
+### DESCARGAR un PDF del albarán por ID
+GET  http://localhost:5000/api/albaranes/pdf/{{albaranId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json

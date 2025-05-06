@@ -28,8 +28,7 @@ async function registerUser(req, res) {
 
         const data = {
             token: await tokenSign(dataUser),
-            user: dataUser,
-            isVerified: false
+            user: dataUser
         }
 
         res.send(data)
@@ -93,9 +92,12 @@ async function loginUser(req, res) {
         if (!user) {
             handleHttpError(res, 'USER_NOT_EXISTS', 404)
         }
-
+        if(!user.validated){
+            handleHttpError(res, 'USER_NOT_VALIDATED', 404)
+        }
         const hashPassword = user.password
         const check = await compare(password, hashPassword)
+        
         if (!check) {
             handleHttpError(res, 'INVALID_PASSWORD', 401)
             return

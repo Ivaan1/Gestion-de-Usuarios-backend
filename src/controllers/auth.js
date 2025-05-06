@@ -61,8 +61,7 @@ async function validateUser(req, res) {
             console.log("Already validated")
             return
         }
-        console.log("code : " + code)
-        console.log("user code : " + user.validationCode)
+        
         if (code === user.validationCode) {
             const validated = true
             const response = await usersModel.findByIdAndUpdate(id, { $set: { validated } }, { new: true })
@@ -87,14 +86,16 @@ async function loginUser(req, res) {
     try {
         const { email, password } = matchedData(req)
 
-        const user = await usersModel.findOne({ email: email }).select("password name role email discipline")
+        const user = await usersModel.findOne({ email: email }).select("password name role email discipline validated")
 
         if (!user) {
             handleHttpError(res, 'USER_NOT_EXISTS', 404)
         }
+        
         if(!user.validated){
             handleHttpError(res, 'USER_NOT_VALIDATED', 404)
         }
+
         const hashPassword = user.password
         const check = await compare(password, hashPassword)
         

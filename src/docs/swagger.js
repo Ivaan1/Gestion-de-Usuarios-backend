@@ -1,85 +1,70 @@
-const swaggerJsdoc = require("swagger-jsdoc")
-const path = require("path");
+// src/docs/swagger.js
+const swaggerJsDoc = require('swagger-jsdoc');
 
-const options = {
-    definition: {
-      openapi: "3.0.3",
-      info: {
-        title: "Gestion de Albaranes API",
-        version: "0.1.0",
-        description:
-          "API para gestionar albaranes y usuarios",
-        license: {
-          name: "MIT",
-          url: "https://spdx.org/licenses/MIT.html",
-        },
-        contact: {
-          name: "u-tad",
-          url: "https://u-tad.com",
-          email: "ricardo.palacios@u-tad.com",
-        },
-      },
-      servers: [
-        {
-          url: "http://localhost:5000",
-        },
-      ],
-      components: {
-        securitySchemes: {
-            bearerAuth: {
-                type: "http",
-                scheme: "bearer"
-            },
-        },
-        schemas:{
-            user: {
-                type: "object",
-                required: ["email", "password"],
-                properties: {
-                  name: {
-                    type: 'string',
-                    description: 'User name',
-                    example: 'Ivan Aranda',
-                  },
-                  profilePicture: {
-                    type: 'string',
-                    description: 'Image file (PNG) of the user',
-                    example: 'image.png',
-                  },
-                  email: {
-                    type: 'string',
-                    description: 'User email',
-                    example: 'example@gmail.com',
-                  },
-                  password: {
-                    type: 'string',
-                    description: 'The password has to be more than 8 characters',
-                  },
-                  role: {
-                    type: 'string',
-                    description:
-                      "The role of the user in the application. 'user' has limited permissions, while 'admin' has full access.",
-                    enum: ['usuario', 'admin'],
-                    example: 'usuario',
-                  },
-                  about: {
-                    type: 'string',
-                    example: 'Desarrolador web con experiencia en JavaScript y Python',
-                  },
-                  phone: {
-                    type: 'string',
-                    description: 'Phone number of the user',
-                    example: '+34600000000',
-                  },
-                },
-            },
-            
-        },
-      },
+// Importar definiciones de rutas
+const userRoutes = require('./routes/users.routes');
+const clientRoutes = require('./routes/clients.routes');
+const authRoutes = require('./routes/auth.routes');
+const projectRoutes = require('./routes/projects.routes');
+const albaranesRoutes = require('./routes/albaranes.routes');
+
+// Importar esquemas/modelos
+const schemas = require('./schemas');
+
+// Configuración base de Swagger
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Gestion de Usuarios y Albaranes',
+      version: '1.0.0',
+      description: 'API para gestionar usuarios y albaranes',
+      contact: {
+        name: 'Ivan Aranda',
+        email: 'ivan.aranda@live.u-tad.com',
+        url: 'https://u-tad.com'
+      }
     },
-    apis: [path.join(__dirname, "../routes/*.js")],
-  };
-  
-  const specs = swaggerJsdoc(options);
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT || 5000}`,
+        description: 'Servidor de desarrollo'
+      }
+    ],
+    tags: [
+      { name: 'Users', description: 'Operaciones con usuarios' },
+      { name: 'Clients', description: 'Operaciones con clientes' },
+      { name: 'Auth', description: 'Operaciones de autenticación' },
+      { name : 'Projects', description: ' Operaciones con Project' },
+      { name : 'Albaranes', description: 'Operaciones con Albaranes'}
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      },
+      ...schemas.components
+    }
+  },
+  apis: [] // No incluimos archivos con anotaciones JSDoc
+};
 
-  module.exports = {specs}
+// Combinar todas las definiciones de rutas
+const paths = {
+  ...userRoutes,
+  ...clientRoutes,
+  ...authRoutes,
+  ...projectRoutes,
+  ...albaranesRoutes
+};
+
+// Agregar paths a las opciones de Swagger
+swaggerOptions.definition.paths = paths;
+
+// Generar especificaciones
+const specs = swaggerJsDoc(swaggerOptions);
+
+module.exports = { specs };

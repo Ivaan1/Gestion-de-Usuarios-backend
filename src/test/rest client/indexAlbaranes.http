@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ### Guardar manualmente el token (Reemplaza despues del login)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQwNDgzMSwiZXhwIjoxNzU2NzcyODMxfQ.cnPwaO0gFgmywjNtRlvvRCi0DmvhK3-wNwqWIPqLUzQ
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE5MGYyZTAyOGU2YjhiNGU3Njc2YjUiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQ3MzQ2MSwiZXhwIjoxNzU2ODQxNDYxfQ.9Y4JK6Bh4UnHsOiVhoLk6lB8T0Yv-hp-Cm76BLo3uxY
 
 ### Obtener algun client ID
 GET http://localhost:5000/api/clients
@@ -17,7 +17,7 @@ Content-Type: application/json
 
 
 ### Guardar manualmente el ID del cliente
-@clientId = 6817fc381d7d0dea0a8bc4e3
+@clientId = 6819114d5be2f82f01010e52
 
 ### Obtener un proyecto del Client por ID 
 GET http://localhost:5000/api/clients/{{clientId}}/projects
@@ -25,7 +25,7 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 ### Guardar manualmente el ID del proyecto
-@projectId = 681823c55e2a03017cd240cb
+@projectId = 681911ce5be2f82f01010e72
 
 ### Crear un nuevo Albarán
 POST http://localhost:5000/api/albaranes
@@ -47,7 +47,7 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 ### Guardar manualmente el ID del albarán
-@albaranId = 6818946e00930a9d31c7f6d6
+@albaranId = 681917fd49a65956afdfd0b5
 
 ### Obtener un albarán por ID
 GET http://localhost:5000/api/albaranes/{{albaranId}}
@@ -71,3 +71,9 @@ Content-Type: application/json
 GET  http://localhost:5000/api/albaranes/pdf/{{albaranId}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
+
+### Eliminar un albarán por ID
+DELETE http://localhost:5000/api/albaranes/{{albaranId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+

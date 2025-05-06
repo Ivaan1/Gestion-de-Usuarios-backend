@@ -33,12 +33,12 @@ const clientSchema = new mongoose.Schema({
     userId: { // ID del usuario asociado
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'user' // Referencia al modelo de usuario
+        ref: 'users' // Referencia al modelo de usuario
     },
     companyId: { // ID de la empresa asociada
         type: mongoose.Schema.Types.ObjectId,
         required: false, // Puede ser opcional si el usuario no está asociado a una empresa
-        ref: 'company'
+        ref: 'companies'
     },
     name: { // Nombre del cliente
         type: String,
@@ -48,9 +48,9 @@ const clientSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    logo: { // Logo del cliente
+    email: {
         type: String,
-        required: false
+        required: true
     },
     activeProjects: { // Proyectos activos
         type: Number,

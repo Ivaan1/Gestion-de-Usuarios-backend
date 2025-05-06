@@ -84,6 +84,14 @@ const userSchema = new mongoose.Schema(
             required: false,
             ref: 'companies' 
         },
+        about: { // Información adicional sobre el usuario
+            type: String,
+            required: false
+        },
+        phone: { // Teléfono del usuario
+            type: String,
+            required: false
+        },
     },
     {
         timestamp: true, 

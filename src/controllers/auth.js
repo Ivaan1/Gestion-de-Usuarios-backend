@@ -116,51 +116,6 @@ async function loginUser(req, res) {
     }
 }
 
-async function updatePassword(req, res) {
-    try {
-        const { email, code, oldPassword, newPassword1, newPassword2 } = matchedData(req);
-
-        if ((!code && !oldPassword) || !newPassword1 || !newPassword2) {
-            return handleHttpError(res, "Faltan datos en la solicitud", 400);
-        }
-
-        // Comparo que sea la misma contraseña
-        if (newPassword1 !== newPassword2) {
-            return handleHttpError(res, 'ERROR_DIFFERENT_PASSWORDS', 400);
-        }
-
-        // Busco el usuario
-        const user = await usersModel.findOne({ email: email }).select("password validationCode");
-
-        if (!user) return handleHttpError(res, 'USER_NOT_FOUND', 404);
-
-
-        if (oldPassword) {
-            // Compruebo que la contraseña enviada y la guardada sean la misma
-            const check = await compare(oldPassword, user.password);
-            if (!check) return handleHttpError(res, 'INVALID_PASSWORD', 401);
-        } else if (code) {
-            // Compruebo que los códigos son iguales
-            if (code != user.validationCode) return handleHttpError(res, 'CODE_INVALID', 404);
-        } else {
-            return handleHttpError(res, 'OLDPASS_OR_CODE_NEEDED', 404)
-        }
-
-        // Hasheo la nueva contraseña
-        const newPassword = await encrypt(newPassword1);
-
-        // Actualizo el campo de la contraseña
-        const data = await usersModel.findByIdAndUpdate(user.id, { $set: { password: newPassword } }, { new: true });
-
-        if (!data) return handleHttpError(res, 'ERROR_UPDATING_PASSWORD');
-
-        res.send({ message: "Contraseña actualizada correctamente" });
-
-    } catch (error) {
-        console.error("Error en updatePassword:", error);
-        handleHttpError(res, 'ERROR_UPDATE_PASSWORD', 500);
-    }
-}
 
 //Funcion que comprueba que existe el usuario, genera un código que guarda en BBDD y envía por correo.
 async function recoverPassword(req, res) {
@@ -173,7 +128,11 @@ async function recoverPassword(req, res) {
 
         const validationCode = Math.floor(100000 + Math.random() * 900000);
 
-        const resUpdate = await usersModel.findOneAndUpdate({email: email}, { $set: { validationCode: validationCode } }, { new: true });
+        const resUpdate = await usersModel.findOneAndUpdate(
+            { email: email },
+            { $set : {validationCode: validationCode }},
+            { new: true }
+          );
 
         if (!resUpdate) return handleHttpError(res);
 
@@ -191,4 +150,4 @@ async function recoverPassword(req, res) {
     }
 }
 
-module.exports = { registerUser, loginUser, updatePassword, recoverPassword, validateUser }
+module.exports = { registerUser, loginUser, recoverPassword, validateUser }

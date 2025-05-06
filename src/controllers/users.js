@@ -158,8 +158,11 @@ async function uploadImage(req, res) {
 
 async function updateUser(req, res) {
     try {
-        const { id, ...body } = matchedData(req)
+        const { id } = req.user; // ID sacado del token
+        const body = matchedData(req)
+
         const data = await usersModel.findByIdAndUpdate(id, { $set: body }, { new: true })
+        
         res.send(data)
     } catch (error) {
         console.log(error)

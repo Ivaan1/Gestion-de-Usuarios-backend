@@ -11,6 +11,18 @@ const app = express()
 const swaggerUi = require("swagger-ui-express")
 const { specs } = require('./docs/swagger')
 
+const morganBody = require("morgan-body")
+
+const loggerStream = require("./utils/handleLogger")
+
+
+morganBody(app, {
+    noColors: true,
+    skip: function(req, res) {
+    return res.statusCode < 400
+    },
+    stream: loggerStream
+   })
 
 //Le decimos a la app de express() que use cors para evitar el error Cross-Domain (XD)
 app.use(cors())

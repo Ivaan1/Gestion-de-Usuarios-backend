@@ -28,11 +28,14 @@ async function getClients(req, res) {
 
 async function createClient(req, res) {
     try {
-    
+        const { id } = req.user; // ID extraído del token
         const data = matchedData(req); // Extraer los datos del cuerpo de la solicitud
         
-        const client = await clientModel.create(data);
-
+        const client = await clientModel.create({
+            ...data,
+            userId: id, // Asignar el ID del usuario que creo al cliente
+        });
+    
         res.status(201).send({ data: client });
     } catch (error) {
         console.log(error);

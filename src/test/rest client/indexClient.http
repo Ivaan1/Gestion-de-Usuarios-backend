@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ### Guardar manualmente el token (Reemplaza despues del login)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQwMTI2MiwiZXhwIjoxNzU2NzY5MjYyfQ.uR1owdtD8wTi-lvAtXZs2xyzA4xsILTvtAaMmHF01vc
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODIyM2RlNThhMzc2NzMxZjE4OGU3ZTciLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NzA4OTcyOSwiZXhwIjoxNzU3NDU3NzI5fQ.GX86V0pJK2ON1NkyUJK-mTz1fBTVXfe5DFE-mFYzwjo
 @userID = 67eb0e6bfdd8ffae9ac70ab6
 
 
@@ -21,7 +21,6 @@ Authorization: Bearer {{auth_token}}
   "name": "ACS",
   "email": "example@gmail.com",
   "cif": "D52921210",
-  "userId": "{{userID}}",
   "address": {
     "street": "Carlos V",
     "number": 22,

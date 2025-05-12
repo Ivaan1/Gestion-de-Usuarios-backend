@@ -32,7 +32,7 @@ const clientSchema = new mongoose.Schema({
     },
     userId: { // ID del usuario asociado
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: false, // lo manejamos en el controlador
         ref: 'users' // Referencia al modelo de usuario
     },
     companyId: { // ID de la empresa asociada

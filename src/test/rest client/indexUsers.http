@@ -3,7 +3,7 @@ POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
+  "email": "ivanmanuel121310@gmail.com",
   "password": "password123"
 }
 ### Inicio de sesión de usuario
@@ -12,12 +12,12 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "email" : "test@example.com",
+  "email" : "ivanmanuel121310@gmail.com",
   "password" : "password123"
 }
 
 ### Guardar manualmente el token (Reemplaza después de la primera ejecución)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE5NTM2MmZlNTIyZDg2OGZlMmI5NTEiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQ5MDIxMCwiZXhwIjoxNzU2ODU4MjEwfQ.Nl0O-EOsYPmuydH9XQahIHPqxEahsAFVkv9VKp5A5S4
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODIzMTk2ZDRlNDk4NTk0ZDE1YzE3MWQiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NzEzMDk3OCwiZXhwIjoxNzU3NDk4OTc4fQ.JMnbU6Q1ZkNeyA2uEj9Jte0vJ8XZmoOHE9xk5jszqAA
 
 ### Validación usando el token almacenado
 POST http://localhost:5000/api/auth/validation
@@ -25,10 +25,10 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "code": 8862682
+  "code": 372855
 }
 ###
-@UserId = 68190f2e028e6b8b4e7676b5
+@UserId = 6823196d4e498594d15c171d
 
 ### Rellenar usuario loggeado
 PATCH http://localhost:5000/api/users
@@ -72,13 +72,12 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 
-
 ### Obtener información de todos los usuarios
 GET http://localhost:5000/api/users
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
-### 5. Usuarios: Crear un nuevo usuario
+### Crear un nuevo usuario
 POST http://localhost:5000/api/users
 Content-Type: application/json
 
@@ -89,17 +88,17 @@ Content-Type: application/json
 
 
 
-### 6. Usuarios: Obtener un usuario por ID (utilizando el id del usuario creado)
+### Obtener un usuario por ID (utilizando el id del usuario creado)
 GET http://localhost:5000/api/users/{{UserId}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
-### 7. Usuarios: Borrar a todos los usuarios 
+### Borrar a todos los usuarios 
 DELETE http://localhost:5000/api/users
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
-### 8. Usuarios: Borrar un usuario por ID (utilizando el id del usuario creado)
+### Borrar un usuario por ID (utilizando el id del usuario creado)
 DELETE http://localhost:5000/api/users/{{UserId}}
 Authorization: Bearer {{auth_token}} 
 

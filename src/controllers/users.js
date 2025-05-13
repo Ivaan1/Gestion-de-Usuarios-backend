@@ -131,7 +131,7 @@ async function deleteAllUsers(req, res) {
 async function uploadImage(req, res) {
     try {
         const { body } = req
-        const id = req.user._id
+        const { id } = req.user; // ID sacado del token
 
         if (!req.file) {
             handleHttpError(res, 'NO_FILE_UPLOADED', 400)
@@ -144,7 +144,6 @@ async function uploadImage(req, res) {
         const ipfsFile = pinataResponse.IpfsHash;
 
         const ipfs = `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${ipfsFile}`;
-
         body.profilePicture = ipfs;
 
         const data = await usersModel.findByIdAndUpdate(id, { $set: body }, { new: true });
@@ -152,7 +151,7 @@ async function uploadImage(req, res) {
         res.send(data);
     } catch (error) {
         console.error(error);
-        handleHttpError(res, 'ERROR_CREATE_USER')
+        handleHttpError(res, 'ERROR_UPLOADED_FILE', 500);
     }
 }
 

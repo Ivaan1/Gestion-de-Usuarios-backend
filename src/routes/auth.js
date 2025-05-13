@@ -9,7 +9,7 @@ router.post("/register", validatorRegister, registerUser)
 
 router.post("/login", validatorLogin, loginUser)
 
-router.post("/recovery", validatorRecoverPassword,validateUserMiddleware, recoverPassword)
+router.post("/recovery", validatorRecoverPassword, recoverPassword)
 
 router.post("/validation", authMiddleWare, validatorValidation, validateUser)
 

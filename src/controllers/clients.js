@@ -102,7 +102,9 @@ async function deleteClient(req, res) {
         }
         
         await clientModel.findByIdAndDelete(id); // Eliminar cliente
-        res.send({ message: 'Cliente eliminado' });
+        
+        res.status(200).json({ acknowledged: true, message: 'Cliente eliminado' });
+
     } catch (error) {
         console.log(error);
         handleHttpError(res, 'ERROR_DELETE_CLIENT', 500);

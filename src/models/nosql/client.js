@@ -46,7 +46,8 @@ const clientSchema = new mongoose.Schema({
     },
     cif: { // CIF del cliente
         type: String,
-        required: false
+        required: true,
+        unique: true // El CIF debe ser único 
     },
     email: {
         type: String,

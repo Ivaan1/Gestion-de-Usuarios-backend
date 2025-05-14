@@ -45,11 +45,16 @@ async function createClient(req, res) {
 
 async function getClient(req, res) {
     try {
+        const { userId } = req.user; // ID extraído del token
         const { id } = req.params; // ID del cliente a buscar
-        const client = await clientModel.findById(id); // Buscar cliente por ID
+        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
         
         if (!client) {
-            return res.status(404).send('Cliente no encontrado');
+           return handleHttpError(res, 'ERROR_CLIENT_NOT_EXIST', 404);
+        }
+
+        if (client.userId !== userId) {
+            return handleHttpError(res, 'ERROR_NO_PERMISOS', 403);
         }
         
         res.send({ data: client });
@@ -61,11 +66,16 @@ async function getClient(req, res) {
 
 async function archiveClient(req, res) {
     try {
+        const { userId } = req.user; // ID extraído del token
         const { id } = req.params; // ID del cliente a archivar
-        const client = await clientModel.findById(id); // Buscar cliente por ID
-
+        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
+        
         if (!client) {
-            return res.status(404).send('Cliente no encontrado');
+           return handleHttpError(res, 'ERROR_CLIENT_NOT_EXIST', 404);
+        }
+
+        if (client.userId !== userId) {
+            return handleHttpError(res, 'ERROR_NO_PERMISOS', 403);
         }
         const archivedClient = await clientModel.findByIdAndUpdate(id, { deleted: true }, { new: true }); // Archivar cliente
         res.send({ data: archivedClient });
@@ -85,6 +95,8 @@ async function getArchivedClients(req, res) {
         if (!data || data.length === 0) {
             return res.status(400).send('Este usuario no tiene clientes archivados');
         }
+
+        
         res.send(data); 
     } catch (error) {
         console.log(error);
@@ -94,8 +106,9 @@ async function getArchivedClients(req, res) {
 
 async function deleteClient(req, res) {
     try {
-        const { id } = req.params; // ID del cliente a eliminar
-        const client = await clientModel.findById(id); // Buscar cliente por ID
+        const { userId } = req.user; // ID extraído del token
+        const { id } = req.params; // ID del cliente a archivar
+        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
         
         if (!client) {
             return res.status(404).send('Cliente no encontrado');
@@ -113,8 +126,10 @@ async function deleteClient(req, res) {
 
 async function restoreClient(req, res) {
     try {
+        const { userId } = req.user; // ID extraído del token
         const { id } = req.params; // ID del cliente a restaurar
-        const client = await clientModel.findById(id); // Buscar cliente por ID
+        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
+    
         
         if (!client) {
             return res.status(404).send('Cliente no encontrado');
@@ -130,15 +145,21 @@ async function restoreClient(req, res) {
 
 async function updateClient(req, res) {
     try {
+        const { userId } = req.user; // ID extraído del token
         const { id } = req.params; // ID del cliente a actualizar
         const data = matchedData(req); // Extraer los datos del cuerpo de la solicitud
         
-        const client = await clientModel.findByIdAndUpdate(id, data, { new: true }); // Actualizar cliente
-        
-        if (!client) {
-            return res.status(404).send('Cliente no encontrado');
+        // Buscar el cliente por ID y asegurarse de que pertenece al usuario autenticado
+        const client = await clientModel.findOneAndUpdate(
+            { _id: id, userId },  // Asegúrate de que el cliente sea del usuario
+            data,                  // Datos a actualizar
+            { new: true }          // Devolver el cliente actualizado
+        );
+
+         if (!client) {
+            return res.status(404).send('Cliente no encontrado o no autorizado');
         }
-        
+
         res.send({ data: client });
     } catch (error) {
         console.log(error);
@@ -149,17 +170,22 @@ async function updateClient(req, res) {
 
 async function getProjectOfClient(req, res) {
     try {
+        const { userId } = req.user; // ID extraído del token
         const { id } = req.params; // ID del cliente a buscar
-        const client = await clientModel.findById(id); // Buscar cliente por ID
-        
-        if (!client) {
-            return res.status(404).send('Cliente no encontrado');
-        }
-        
         const projects = await projectModel.find({ clientId: id }); // Buscar proyectos relacionados al cliente
         
+        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
+        
+        if (!client) {
+            return handleHttpError(res, 'ERROR_CLIENT_NOT_EXIST', 404);
+        }
+        
         if (!projects || projects.length === 0) {
-            return res.status(400).send('Este cliente no tiene proyectos registrados');
+            return handleHttpError(res, 'ERROR_NO_PROJECTS', 404);
+        }
+
+        if( client.userId !== userId) {
+            return handleHttpError(res, 'ERROR_NO_PERMISOS', 403);
         }
         
         res.send({ data: projects });

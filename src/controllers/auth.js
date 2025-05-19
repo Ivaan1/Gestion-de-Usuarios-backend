@@ -1,6 +1,6 @@
 const { matchedData } = require('express-validator')
 const { encrypt, compare } = require('../utils/handlePassword')
-const { tokenSign } = require('../utils/handleJWT')
+const { tokenSign, tokenSignRecovery } = require('../utils/handleJWT')
 const { usersModel } = require('../models')
 const { handleHttpError } = require('../utils/handleErrors')
 const { sendEmail } = require("../utils/handleEmail")
@@ -13,7 +13,7 @@ async function registerUser(req, res) {
 
 
         const password = await encrypt(req.password)
-        //Se duplica el cuerpo pero se sobreescribe la contraseña para que en la base de datos se guarde encriptada
+
         const body = { ...req, password, validationCode }
 
         //Se crea el usuario en la base de datos
@@ -27,7 +27,7 @@ async function registerUser(req, res) {
         })
 
         const data = {
-            token: await tokenSign(dataUser),
+            token: tokenSign(dataUser),
             user: dataUser
         }
 
@@ -42,6 +42,7 @@ async function registerUser(req, res) {
         }
     }
 }
+
 
 async function validateUser(req, res) {
     try {
@@ -66,7 +67,9 @@ async function validateUser(req, res) {
             const validated = true
             const response = await usersModel.findByIdAndUpdate(id, { $set: { validated } }, { new: true })
             console.log("Usuario validado")
-            res.send(response)
+            const token = tokenSign(response) 
+            res.send({ user: response, token })
+            
         } else {
             const tries = Number(user.tries) - 1
             const response = await usersModel.findByIdAndUpdate(id, { $set: { tries } }, { new: true })
@@ -81,19 +84,19 @@ async function validateUser(req, res) {
 }
 
 
-//TODO: Los errores tienen que ser los mismos en producción para frena la fuerza bruta
+
 async function loginUser(req, res) {
     try {
         const { email, password } = matchedData(req)
 
-        const user = await usersModel.findOne({ email: email }).select("password name role email discipline validated")
+        const user = await usersModel.findOne({ email: email }).select("password name role email validated")
 
         if (!user) {
-            handleHttpError(res, 'USER_NOT_EXISTS', 404)
+            return handleHttpError(res, 'USER_NOT_EXISTS', 404)
         }
         
         if(!user.validated){
-            handleHttpError(res, 'USER_NOT_VALIDATED', 404)
+            return handleHttpError(res, 'USER_NOT_VALIDATED', 404)
         }
 
         const hashPassword = user.password
@@ -137,6 +140,9 @@ async function recoverPassword(req, res) {
             { new: true }
           );
 
+        //se genera el token de recuperacion
+        const tokenRecovery = tokenSignRecovery(user);
+
         if (!resUpdate) return handleHttpError(res);
 
         sendEmail({
@@ -146,11 +152,44 @@ async function recoverPassword(req, res) {
             to: email
         });
 
-        res.send({ message: "Enviado código de recuperación de contraseña" });
+        res.send({ message: "Código enviado al correo del usuario", token: tokenRecovery, code: validationCode })
     } catch (e) {
         console.log(e)
         handleHttpError(res)
     }
 }
 
-module.exports = { registerUser, loginUser, recoverPassword, validateUser }
+async function newpassword(req, res) {
+    try {
+        const { newPassword1, newPassword2 } = matchedData(req);
+        const { id } = req.user
+
+        if (newPassword1 !== newPassword2) {
+            return handleHttpError(res, 'PASSWORDS_DO_NOT_MATCH', 400);
+        }
+        const passwordHash = await encrypt(newPassword1);
+
+        const user = await usersModel.findByIdAndUpdate(
+            id,
+            { $set: { password: passwordHash } },
+            { new: true }
+        );
+
+        if (!user) return handleHttpError(res, 'USER_NOT_FOUND', 404)
+
+        
+        res.send({ message: "Contraseña actualizada" })
+    } catch (e) {
+        console.log(e)
+        handleHttpError(res, 'ERROR_UPDATE_PASSWORD')
+    }
+}
+
+
+module.exports = { 
+    registerUser, 
+    loginUser, 
+    recoverPassword, 
+    validateUser, 
+    newpassword 
+}

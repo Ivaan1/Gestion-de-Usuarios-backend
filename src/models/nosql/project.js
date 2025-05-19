@@ -32,7 +32,8 @@ const projectSchema = new mongoose.Schema({
     },
     projectCode: { // Código de identificación del proyecto
         type: String,
-        required: true
+        required: true,
+        unique: true // Debe ser único
     },
     address: { // Dirección del proyecto
         type: addressSchema,

@@ -10,12 +10,11 @@ async function createProject(req, res) {
         const data = matchedData(req); 
 
         const existingProject = await projectModel.findOne({
-            projectCode: data.projectCode,  
-            userId: id, 
+            projectCode: data.projectCode
         });
 
         if (existingProject) {
-            return res.status(400).send('Ya existe un proyecto con ese projectCode para este usuario');
+            return handleHttpError(res, 'PROJECT_ALREADY_EXISTS', 409);
         }
 
         const project = await projectModel.create({
@@ -34,32 +33,34 @@ async function createProject(req, res) {
 async function updateProject(req, res) {
     try {
         const { id } = req.params; // Obtener el ID del proyecto de los parámetros de la solicitud
+        const { id: userid } = req.user; // ID extraído del token
         const data = matchedData(req); // Extraer los datos del cuerpo de la solicitud
 
-        const { projectCode, userId } = data; // Extraemos projectCode y userId si están en los datos
-
-        // Eliminar projectCode y userId de los datos que se actualizarán
-        delete data.projectCode; 
-        delete data.userId;      
-
-        // Validación para asegurarse de que no haya otro proyecto con el mismo projectCode para el mismo cliente y usuario
-        const existingProject = await projectModel.findOne({
-            projectCode: projectCode,
-            userId: req.userId, // ID del usuario extraído del token
-            _id: { $ne: id }, // Excluir el proyecto actual
-        });
-
-        if (existingProject) {
-            return res.status(400).send('Ya existe un proyecto con ese projectCode para este usuario y cliente');
-        }
-
-        const project = await projectModel.findByIdAndUpdate(id, data, { new: true }); // Actualizar el proyecto en la base de datos
+        const project = await projectModel.findOne({ _id: id });
 
         if (!project) {
             return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); // Manejar el error si el proyecto no se encuentra
         }
+        
+        if( project.userId.toString() !== userid) {
+            return handleHttpError(res, 'NOT_AUTHORIZED', 403); // Manejar el error si el usuario no está autorizado
+        }
 
-        res.status(200).send({ data: project }); // Enviar la respuesta con el proyecto actualizado
+        const { projectCode, userId  } = data; // Extraer el código del proyecto de los datos por si intentan cambiarlo
+
+        const existingProject = await projectModel.findOne({ projectCode });
+
+        if (existingProject) {
+            return handleHttpError(res, 'PROJECT_ALREADY_EXISTS', 409); // Manejar el error si el proyecto ya existe
+        }
+
+        const updatedProject = await projectModel.findByIdAndUpdate(
+            id,
+            { ...data }, // Actualizar el proyecto con los nuevos datos
+            { new: true } // Devolver el proyecto actualizado
+        );
+
+        res.status(200).send({ data: updatedProject }); // Enviar la respuesta con el proyecto actualizado
     } catch (error) {
         console.log(error); // Imprimir el error en la consola
         handleHttpError(res, 'ERROR_UPDATE_PROJECT', 500); // Manejar el error y enviar una respuesta al cliente
@@ -82,11 +83,16 @@ async function getProjects(req, res) {
 async function getProject(req, res) {
     try {
         const { id } = req.params; // Obtener el ID del proyecto de los parámetros de la solicitud
+        const { id: userId } = req.user; // ID extraído del token
 
         const project = await projectModel.findById(id); // Buscar el proyecto por ID
 
         if (!project) {
             return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); // Manejar el error si el proyecto no se encuentra
+        }
+
+        if( project.userId.toString() !== userId) {
+            return handleHttpError(res, 'NOT_AUTHORIZED', 403); // Manejar el error si el usuario no está autorizado
         }
 
         res.status(200).send({ data: project }); // Enviar la respuesta con el proyecto encontrado
@@ -99,14 +105,24 @@ async function getProject(req, res) {
 async function archiveProject(req, res) {
     try {
         const { id } = req.params; // Obtener el ID del proyecto de los parámetros de la solicitud
+        const { id: userId } = req.user; // ID extraído del token
 
-        const project = await projectModel.findByIdAndUpdate(id, { deleted: true }, { new: true }); // Archivar el proyecto (soft delete)
+        const project = await projectModel.findById(id); // Buscar el proyecto por ID
 
         if (!project) {
             return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); // Manejar el error si el proyecto no se encuentra
         }
+        if( project.userId.toString() !== userId) {
+            return handleHttpError(res, 'NOT_AUTHORIZED', 403); // Manejar el error si el usuario no está autorizado
+        }
+        const archivedProject = await projectModel.findByIdAndUpdate(
+            id,
+            { deleted: true }, // Marcar el proyecto como archivado (soft delete)
+            { new: true } // Devolver el proyecto actualizado
+        ).select('name client deleted');
+    
 
-        res.status(200).send({ data: project }); // Enviar la respuesta con el proyecto archivado
+        res.status(200).send({ data: archivedProject }); // Enviar la respuesta con el proyecto archivado
     } catch (error) {
         console.log(error); // Imprimir el error en la consola
         handleHttpError(res, 'ERROR_ARCHIVE_PROJECT', 500); // Manejar el error y enviar una respuesta al cliente
@@ -116,30 +132,45 @@ async function archiveProject(req, res) {
 async function restoreProject(req, res) {
     try {
         const { id } = req.params; // Obtener el ID del proyecto de los parámetros de la solicitud
+        const { id: userId } = req.user; // ID extraído del token
 
-        const project = await projectModel.findByIdAndUpdate(id, { deleted: false }, { new: true }); // Restaurar el proyecto (soft delete)
+        const project = await projectModel.findById(id); // Buscar el proyecto por ID
 
         if (!project) {
             return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); // Manejar el error si el proyecto no se encuentra
         }
+        if( project.userId.toString() !== userId) {
+            return handleHttpError(res, 'NOT_AUTHORIZED', 403); // Manejar el error si el usuario no está autorizado
+        }
+        const archivedProject = await projectModel.findByIdAndUpdate(
+            id,
+            { deleted: false }, // Marcar el proyecto como archivado (soft delete)
+            { new: true } // Devolver el proyecto actualizado
+        ).select('name client deleted');
+    
 
-        res.status(200).send({ data: project }); // Enviar la respuesta con el proyecto restaurado
+        res.status(200).send({ data: archivedProject }); // Enviar la respuesta con el proyecto archivado
     } catch (error) {
         console.log(error); // Imprimir el error en la consola
-        handleHttpError(res, 'ERROR_RESTORE_PROJECT', 500); // Manejar el error y enviar una respuesta al cliente
+        handleHttpError(res, 'ERROR_ARCHIVE_PROJECT', 500); // Manejar el error y enviar una respuesta al cliente
     }
 }
 
 async function deleteProject(req, res) {
     try {
         const { id } = req.params; // Obtener el ID del proyecto de los parámetros de la solicitud
+        const { id: userId } = req.user; // ID extraído del token
 
-        const project = await projectModel.findByIdAndDelete(id); // Eliminar el proyecto (hard delete)
+        const project = await projectModel.findById(id); // Buscar el proyecto por ID
 
         if (!project) {
             return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); // Manejar el error si el proyecto no se encuentra
         }
+        if( project.userId.toString() !== userId) {
+            return handleHttpError(res, 'NOT_AUTHORIZED', 403); // Manejar el error si el usuario no está autorizado
+        }
 
+        await projectModel.findByIdAndDelete(id); // Eliminar el proyecto de la base de datos
         res.send({ message: 'Proyecto eliminado' });
     } catch (error) {
         console.log(error); // Imprimir el error en la consola

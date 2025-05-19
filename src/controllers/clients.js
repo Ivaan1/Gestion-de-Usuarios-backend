@@ -30,7 +30,13 @@ async function createClient(req, res) {
     try {
         const { id } = req.user; // ID extraído del token
         const data = matchedData(req); // Extraer los datos del cuerpo de la solicitud
-        
+
+        const existingClient = await clientModel.findOne({  cif: data.cif }); // Buscar cliente por CIF
+
+        if (existingClient) {
+            return handleHttpError(res, 'CLIENT_ALREADY_EXISTS', 409); // 409: Conflict
+        }
+
         const client = await clientModel.create({
             ...data,
             userId: id, // Asignar el ID del usuario que creo al cliente
@@ -45,15 +51,16 @@ async function createClient(req, res) {
 
 async function getClient(req, res) {
     try {
-        const { userId } = req.user; // ID extraído del token
-        const { id } = req.params; // ID del cliente a buscar
-        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
+        const { id: userId } = req.user; // ID extraído del token
+        const { id: clientId } = req.params; // ID del cliente a buscar
+
+        const client = await clientModel.findOne({ _id: clientId, userId: userId }); // Buscar cliente por ID
         
         if (!client) {
            return handleHttpError(res, 'ERROR_CLIENT_NOT_EXIST', 404);
         }
 
-        if (client.userId !== userId) {
+        if (client.userId.toString() !== userId) {
             return handleHttpError(res, 'ERROR_NO_PERMISOS', 403);
         }
         
@@ -66,18 +73,19 @@ async function getClient(req, res) {
 
 async function archiveClient(req, res) {
     try {
-        const { userId } = req.user; // ID extraído del token
-        const { id } = req.params; // ID del cliente a archivar
-        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
+        const { id: userId } = req.user; // ID extraído del token
+        const { id: clientId } = req.params; // ID del cliente a buscar
+        const client = await clientModel.findOne({ _id: clientId, userId }); // Buscar cliente por ID
         
         if (!client) {
            return handleHttpError(res, 'ERROR_CLIENT_NOT_EXIST', 404);
         }
 
-        if (client.userId !== userId) {
+        if (client.userId.toString() !== userId) {
             return handleHttpError(res, 'ERROR_NO_PERMISOS', 403);
         }
-        const archivedClient = await clientModel.findByIdAndUpdate(id, { deleted: true }, { new: true }); // Archivar cliente
+
+        const archivedClient = await clientModel.findByIdAndUpdate(clientId, { deleted: true }, { new: true }); // Archivar cliente
         res.send({ data: archivedClient });
     }
     catch (error) {
@@ -106,15 +114,20 @@ async function getArchivedClients(req, res) {
 
 async function deleteClient(req, res) {
     try {
-        const { userId } = req.user; // ID extraído del token
-        const { id } = req.params; // ID del cliente a archivar
-        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
+        const { id: userId } = req.user; // ID extraído del token
+        const { id: clientId } = req.params; // ID del cliente a buscar
+
+        const client = await clientModel.findOne({ _id: clientId, userId }); // Buscar cliente por ID
         
         if (!client) {
-            return res.status(404).send('Cliente no encontrado');
+            return handleHttpError(res, 'ERROR_CLIENT_NOT_EXIST', 404);
+        }
+
+        if (client.userId.toString() !== userId) {
+            return handleHttpError(res, 'ERROR_NO_PERMISOS', 403);
         }
         
-        await clientModel.findByIdAndDelete(id); // Eliminar cliente
+        await clientModel.findByIdAndDelete(clientId); // Eliminar cliente
         
         res.status(200).json({ acknowledged: true, message: 'Cliente eliminado' });
 
@@ -126,16 +139,20 @@ async function deleteClient(req, res) {
 
 async function restoreClient(req, res) {
     try {
-        const { userId } = req.user; // ID extraído del token
-        const { id } = req.params; // ID del cliente a restaurar
-        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
+        const { id: userId } = req.user; // ID extraído del token
+        const { id: clientId } = req.params; // ID del cliente a buscar
+        const client = await clientModel.findOne({ _id: clientId, userId }); // Buscar cliente por ID
     
         
         if (!client) {
-            return res.status(404).send('Cliente no encontrado');
+            return handleHttpError(res, 'ERROR_CLIENT_NOT_EXIST', 404);
+        }
+
+        if (client.userId.toString() !== userId) {
+            return handleHttpError(res, 'ERROR_NO_PERMISOS', 403);
         }
         
-        const restoredClient = await clientModel.findByIdAndUpdate(id, { deleted: false }, { new: true }); // Restaurar cliente
+        const restoredClient = await clientModel.findByIdAndUpdate(clientId, { deleted: false }, { new: true }); // Restaurar cliente 
         res.send({ data: restoredClient });
     } catch (error) {
         console.log(error);
@@ -145,19 +162,22 @@ async function restoreClient(req, res) {
 
 async function updateClient(req, res) {
     try {
-        const { userId } = req.user; // ID extraído del token
-        const { id } = req.params; // ID del cliente a actualizar
+        const { id : userId } = req.user; //ID del usuario loggeado,
+        const { id : clientId} = req.params; // ID del cliente a actualizar
         const data = matchedData(req); // Extraer los datos del cuerpo de la solicitud
         
-        // Buscar el cliente por ID y asegurarse de que pertenece al usuario autenticado
         const client = await clientModel.findOneAndUpdate(
-            { _id: id, userId },  // Asegúrate de que el cliente sea del usuario
-            data,                  // Datos a actualizar
-            { new: true }          // Devolver el cliente actualizado
+            { _id: clientId, userId },  // Asegúrate de que el cliente sea del usuario
+            data,                  
+            { new: true }          
         );
 
-         if (!client) {
-            return res.status(404).send('Cliente no encontrado o no autorizado');
+        if (client.userId.toString() !== userId) {
+            return handleHttpError(res, 'ERROR_NO_PERMISOS', 403);
+        }
+
+        if (!client) {
+            return handleHttpError(res, 'ERROR_CLIENT_NOT_EXIST', 404);
         }
 
         res.send({ data: client });

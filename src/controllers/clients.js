@@ -190,11 +190,12 @@ async function updateClient(req, res) {
 
 async function getProjectOfClient(req, res) {
     try {
-        const { userId } = req.user; // ID extraído del token
-        const { id } = req.params; // ID del cliente a buscar
-        const projects = await projectModel.find({ clientId: id }); // Buscar proyectos relacionados al cliente
+        const { id: userId } = req.user; // ID extraído del token
+        const { id: clientId } = req.params; // ID del cliente a buscar
+
+        const projects = await projectModel.find({ clientId: clientId, userId }); // Buscar proyectos relacionados al cliente y usuario
         
-        const client = await clientModel.findOne({ _id: id, userId }); // Buscar cliente por ID
+        const client = await clientModel.findOne({ _id: clientId, userId }); // Buscar cliente por ID
         
         if (!client) {
             return handleHttpError(res, 'ERROR_CLIENT_NOT_EXIST', 404);
@@ -204,10 +205,10 @@ async function getProjectOfClient(req, res) {
             return handleHttpError(res, 'ERROR_NO_PROJECTS', 404);
         }
 
-        if( client.userId !== userId) {
+        if( client.userId.toString() !== userId) {
             return handleHttpError(res, 'ERROR_NO_PERMISOS', 403);
         }
-        
+
         res.send({ data: projects });
     } catch (error) {
         console.log(error);

@@ -3,12 +3,12 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-  "email" : "test@example.com",
+  "email" : "ivanmanuel121310@gmail.com",
   "password" : "password123"
 }
 
 ### Guardar manualmente el token (Reemplaza despues del login)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ViMGU2YmZkZDhmZmFlOWFjNzBhYjYiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQwNDgzMSwiZXhwIjoxNzU2NzcyODMxfQ.cnPwaO0gFgmywjNtRlvvRCi0DmvhK3-wNwqWIPqLUzQ
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODJiOTk3MWY4MjFmNzBkMzAwNzMzN2QiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NzY5MjA1MCwiZXhwIjoxNzU4MDYwMDUwfQ.52Q87jFmNE1kufCjzA_xgx9XoiFMQKbaqn1Qei4hfk8
 
 ### Obtener algun client ID
 GET http://localhost:5000/api/clients
@@ -17,7 +17,7 @@ Content-Type: application/json
 
 
 ### Guardar manualmente el ID del cliente
-@clientId = 6817fc381d7d0dea0a8bc4e3
+@clientId = 682baa29feba008c750cc268
 
 ### Crear un nuevo proyecto
 POST http://localhost:5000/api/projects
@@ -45,7 +45,7 @@ Content-Type: application/json
 
 
 ### Guardar manualmente el ID del proyecto
-@projectId = 6818180be770f99d4a99411a
+@projectId = 682baadafeba008c750cc27
 
 ### Actualizar un proyecto por ID
 PUT http://localhost:5000/api/projects/{{projectId}}

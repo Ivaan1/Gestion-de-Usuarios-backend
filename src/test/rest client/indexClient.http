@@ -3,13 +3,13 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-  "email" : "test@example.com",
+  "email" : "ivanmanuel121310@gmail.com",
   "password" : "password123"
 }
 
 ### Guardar manualmente el token (Reemplaza despues del login)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODIyM2RlNThhMzc2NzMxZjE4OGU3ZTciLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NzA4OTcyOSwiZXhwIjoxNzU3NDU3NzI5fQ.GX86V0pJK2ON1NkyUJK-mTz1fBTVXfe5DFE-mFYzwjo
-@userID = 67eb0e6bfdd8ffae9ac70ab6
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODJiOTk3MWY4MjFmNzBkMzAwNzMzN2QiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NzY4Nzg3MSwiZXhwIjoxNzU4MDU1ODcxfQ.KHk7di2eFxore5NTXUdniBfDvzQCVdPROnERXdNZ3mY
+@userID = 682b9971f821f70d3007337d
 
 
 ### Crear nuevo cliente o empresa
@@ -30,7 +30,7 @@ Authorization: Bearer {{auth_token}}
   }
 }
 ### Guardar manualmente el ID del cliente
-@ClientId = 6817fc381d7d0dea0a8bc4e3
+@ClientId = 682b9a4ec44aca1c058892c4
 
 ### Actualizar un cliente por ID
 PUT http://localhost:5000/api/clients/{{ClientId}}

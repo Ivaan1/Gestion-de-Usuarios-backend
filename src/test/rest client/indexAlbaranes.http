@@ -3,12 +3,12 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-  "email" : "test@example.com",
+  "email" : "ivanmanuel121310@gmail.com",
   "password" : "password123"
 }
 
 ### Guardar manualmente el token (Reemplaza despues del login)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODE5MGYyZTAyOGU2YjhiNGU3Njc2YjUiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NjQ3MzQ2MSwiZXhwIjoxNzU2ODQxNDYxfQ.9Y4JK6Bh4UnHsOiVhoLk6lB8T0Yv-hp-Cm76BLo3uxY
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODJiOTk3MWY4MjFmNzBkMzAwNzMzN2QiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NzY5NTY2NSwiZXhwIjoxNzU4MDYzNjY1fQ.MVCGM38hW1Z7ISXGHNpMuqS9UqYKsWf-f_QZKRtIih0
 
 ### Obtener algun client ID
 GET http://localhost:5000/api/clients
@@ -17,15 +17,16 @@ Content-Type: application/json
 
 
 ### Guardar manualmente el ID del cliente
-@clientId = 6819114d5be2f82f01010e52
+@clientId = 682baa29feba008c750cc268
 
 ### Obtener un proyecto del Client por ID 
+### este endpoint devuelve todos los proyectos del cliente
 GET http://localhost:5000/api/clients/{{clientId}}/projects
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 ### Guardar manualmente el ID del proyecto
-@projectId = 681911ce5be2f82f01010e72
+@projectId = 682bb88314fd0af4fec1f5f9
 
 ### Crear un nuevo Albarán
 POST http://localhost:5000/api/albaranes
@@ -38,7 +39,8 @@ Content-Type: application/json
   "description": "Descripción del albarán",
   "format": "materials",
   "materials": ["Material 1", "Material 2"],
-  "workdate": "2023-10-01"
+  "workdate": "2023-10-01",
+  "albaranCode": "ALB-001"
 }
 
 ### Obtener todos los albaranes del USUARIO

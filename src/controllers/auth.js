@@ -89,7 +89,7 @@ async function loginUser(req, res) {
     try {
         const { email, password } = matchedData(req)
 
-        const user = await usersModel.findOne({ email: email }).select("password name role email validated")
+        const user = await usersModel.findOne({ email: email }).select("name role email validated password")
 
         if (!user) {
             return handleHttpError(res, 'USER_NOT_EXISTS', 404)
@@ -111,11 +111,12 @@ async function loginUser(req, res) {
         user.set("password", undefined, { strick: false })
 
         const data = {
-            token: await tokenSign(user),
+            token:  tokenSign(user),
             user
         }
 
         res.send(data)
+
     } catch (e) {
         console.log(e)
         handleHttpError(res, 'ERROR_USER_LOGIN')

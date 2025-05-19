@@ -35,7 +35,14 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
          .fontSize(18)
          .fillColor(textColor)
          .text('ALBARÁN DE ENTREGA', { align: 'center' });
-         
+      
+      doc.moveDown();
+      
+      // Número de albarán destacado
+      doc.font(titleFont)
+         .fontSize(14)
+         .text(`Albarán: ${albaran.albaranCode || albaran._id}`, { align: 'center' });
+      
       doc.moveDown();
       
       // Información de la empresa
@@ -43,13 +50,12 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
          .fontSize(12)
          .text('DATOS DE LA EMPRESA:');
       
+      // Usar datos del usuario (empresa emisora)
       doc.font(normalFont)
          .fontSize(10)
          .text(`Empresa: Tu Empresa S.L.`)
-         .text(`CIF: B12345678`)
-         .text(`Dirección: Calle Principal 123, 28001 Madrid`)
-         .text(`Email: info@tuempresa.com`)
-         .text(`Teléfono: +34 912 345 678`);
+         .text(`Email: ${albaran.userId.email}`)
+         .text(`Dirección: ${albaran.userId.address.street} ${albaran.userId.address.number}, ${albaran.userId.address.postal} ${albaran.userId.address.city}, ${albaran.userId.address.province}`);
       
       doc.moveDown();
       
@@ -62,7 +68,7 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
          .fontSize(10)
          .text(`Nombre: ${albaran.clientId.name}`)
          .text(`CIF: ${albaran.clientId.cif}`)
-         .text(`Dirección: ${albaran.clientId.address}`);
+         .text(`Dirección: ${albaran.clientId.address.street} ${albaran.clientId.address.number}, ${albaran.clientId.address.postal} ${albaran.clientId.address.city}, ${albaran.clientId.address.province}`);
       
       doc.moveDown();
       
@@ -73,16 +79,27 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
       
       doc.font(normalFont)
          .fontSize(10)
-         .text(`Nº Albarán: ${albaran._id}`)
-         .text(`Fecha: ${new Date(albaran.date).toLocaleDateString('es-ES')}`)
-         .text(`Proyecto: ${albaran.projectId ? albaran.projectId.name : 'N/A'} ${albaran.projectId ? '(' + albaran.projectId.projectCode + ')' : ''}`);
+         .text(`Fecha: ${new Date(albaran.workdate || albaran.createdAt).toLocaleDateString('es-ES')}`)
+         .text(`Proyecto: ${albaran.projectId ? albaran.projectId.name : 'N/A'} ${albaran.projectId ? '(' + albaran.projectId.projectCode + ')' : ''}`)
+         .text(`Descripción: ${albaran.description || 'Sin descripción'}`);
       
       doc.moveDown();
       
-      // Tabla de productos/servicios
+      // Tabla de productos/servicios según el formato
       const tableTop = doc.y;
-      const tableHeaders = ['Descripción', 'Cantidad', 'Unidad', 'Observaciones'];
-      const tableColumnWidths = [240, 70, 70, 110];
+      let tableHeaders = [];
+      let tableColumnWidths = [];
+      
+      if (albaran.format === 'materials') {
+        tableHeaders = ['Material', 'Observaciones'];
+        tableColumnWidths = [300, 190];
+      } else if (albaran.format === 'items') {
+        tableHeaders = ['Descripción', 'Cantidad', 'Unidad', 'Observaciones'];
+        tableColumnWidths = [240, 70, 70, 110];
+      } else {
+        tableHeaders = ['Descripción', 'Horas', 'Observaciones'];
+        tableColumnWidths = [240, 70, 180];
+      }
       
       // Dibujar encabezados de tabla
       let currentX = doc.x;
@@ -111,10 +128,153 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
       currentY += 20;
       doc.font(normalFont);
       
-      // Dibujar filas de productos
+      // Dibujar filas según el formato del albarán
       let rowHeight = 0;
       
-      if (albaran.items && albaran.items.length > 0) {
+      if (albaran.format === 'materials' && albaran.materials && albaran.materials.length > 0) {
+        // Mostrar lista de materiales
+        albaran.materials.forEach((material, index) => {
+          rowHeight = Math.max(
+            doc.heightOfString(material, { width: tableColumnWidths[0] - 10 }),
+            25
+          );
+          
+          // Verificar si necesitamos una nueva página
+          if (currentY + rowHeight > doc.page.height - 100) {
+            doc.addPage();
+            currentY = doc.page.margins.top;
+            // Redibuja los encabezados en la nueva página
+            doc.font(titleFont).fontSize(10);
+            currentX = doc.x;
+            
+            doc.rect(currentX, currentY, 490, 20)
+               .fillAndStroke('#e9e9e9', '#cccccc');
+            
+            tableHeaders.forEach((header, i) => {
+              doc.text(
+                header,
+                currentX + 5,
+                currentY + 5,
+                { width: tableColumnWidths[i], align: 'left' }
+              );
+              currentX += tableColumnWidths[i];
+            });
+            
+            currentX = doc.x;
+            currentY += 20;
+            doc.font(normalFont);
+          }
+          
+          // Dibujar la fila
+          doc.rect(currentX, currentY, 490, rowHeight)
+             .stroke('#cccccc');
+          
+          // Dibujar separador de columnas
+          doc.moveTo(currentX + tableColumnWidths[0], currentY)
+             .lineTo(currentX + tableColumnWidths[0], currentY + rowHeight)
+             .stroke('#cccccc');
+          
+          // Material
+          doc.text(
+            material,
+            currentX + 5,
+            currentY + 5,
+            { width: tableColumnWidths[0] - 10, align: 'left' }
+          );
+          
+          // No hay observaciones específicas para materiales, dejamos en blanco
+          
+          // Actualizar posición Y para la siguiente fila
+          currentY += rowHeight;
+        });
+      } else if (albaran.format === 'hours' && albaran.hours && albaran.hours.length > 0) {
+        // Mostrar lista de horas trabajadas
+        albaran.hours.forEach((hour, index) => {
+          const description = hour.description || '';
+          const hoursValue = hour.hours ? `${hour.hours}h` : '';
+          const observations = hour.observations || '';
+          
+          rowHeight = Math.max(
+            doc.heightOfString(description, { width: tableColumnWidths[0] - 10 }),
+            doc.heightOfString(observations, { width: tableColumnWidths[2] - 10 }),
+            25
+          );
+          
+          // Verificar si necesitamos una nueva página
+          if (currentY + rowHeight > doc.page.height - 100) {
+            doc.addPage();
+            currentY = doc.page.margins.top;
+            // Redibuja los encabezados en la nueva página
+            doc.font(titleFont).fontSize(10);
+            currentX = doc.x;
+            
+            doc.rect(currentX, currentY, 490, 20)
+               .fillAndStroke('#e9e9e9', '#cccccc');
+            
+            tableHeaders.forEach((header, i) => {
+              doc.text(
+                header,
+                currentX + 5,
+                currentY + 5,
+                { width: tableColumnWidths[i], align: 'left' }
+              );
+              currentX += tableColumnWidths[i];
+            });
+            
+            currentX = doc.x;
+            currentY += 20;
+            doc.font(normalFont);
+          }
+          
+          // Dibujar la fila
+          doc.rect(currentX, currentY, 490, rowHeight)
+             .stroke('#cccccc');
+          
+          // Dibujar separadores de columnas
+          let colX = currentX;
+          tableColumnWidths.forEach((width, i) => {
+            if (i > 0) {
+              doc.moveTo(colX, currentY)
+                 .lineTo(colX, currentY + rowHeight)
+                 .stroke('#cccccc');
+            }
+            colX += width;
+          });
+          
+          // Rellenar contenido
+          colX = currentX;
+          
+          // Descripción
+          doc.text(
+            description,
+            colX + 5,
+            currentY + 5,
+            { width: tableColumnWidths[0] - 10, align: 'left' }
+          );
+          colX += tableColumnWidths[0];
+          
+          // Horas
+          doc.text(
+            hoursValue,
+            colX + 5,
+            currentY + 5,
+            { width: tableColumnWidths[1] - 10, align: 'center' }
+          );
+          colX += tableColumnWidths[1];
+          
+          // Observaciones
+          doc.text(
+            observations,
+            colX + 5,
+            currentY + 5,
+            { width: tableColumnWidths[2] - 10, align: 'left' }
+          );
+          
+          // Actualizar posición Y para la siguiente fila
+          currentY += rowHeight;
+        });
+      } else if (albaran.format === 'items' && albaran.items && albaran.items.length > 0) {
+        // Mostrar lista de items (como en el código original)
         albaran.items.forEach((item, index) => {
           // Calcular altura de la fila basada en el contenido más largo
           const descriptionHeight = doc.heightOfString(item.description, { 
@@ -214,7 +374,7 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
         });
       } else {
         // Si no hay productos, mostrar un mensaje
-        doc.text('No hay productos en este albarán', currentX + 5, currentY + 10);
+        doc.text('No hay elementos en este albarán', currentX + 5, currentY + 10);
         currentY += 30;
       }
       
@@ -225,6 +385,14 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
       
       doc.font(normalFont)
          .text(albaran.observations || 'Sin observaciones.');
+      
+      // Estado del albarán
+      doc.moveDown();
+      doc.font(titleFont)
+         .text('ESTADO:');
+      
+      doc.font(normalFont)
+         .text(albaran.pending ? 'PENDIENTE' : 'COMPLETADO');
       
       // Firmas
       doc.moveDown(2);
@@ -247,8 +415,33 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
       doc.font(titleFont)
          .text('Firma y sello cliente:', doc.x + 250, signatureY);
       
-      doc.rect(doc.x + 250, signatureY + 20, 200, 60)
-         .stroke();
+      // Si hay firma del cliente, mostrarla
+      if (albaran.sign) {
+        try {
+          // Si es una URL de imagen
+          doc.image(albaran.sign, doc.x + 250, signatureY + 20, { 
+            fit: [200, 60],
+            align: 'center',
+            valign: 'center'
+          });
+        } catch (e) {
+          // Si hay error al cargar la imagen, solo dibujar el recuadro
+          console.log('No se pudo cargar la imagen de firma');
+          doc.rect(doc.x + 250, signatureY + 20, 200, 60)
+             .stroke();
+        }
+      } else {
+        // Si no hay firma, solo dibujar el recuadro
+        doc.rect(doc.x + 250, signatureY + 20, 200, 60)
+           .stroke();
+      }
+      
+      // Si el albarán está firmado, indicarlo
+      if (albaran.signed) {
+        doc.font(normalFont)
+           .fontSize(8)
+           .text('ALBARÁN FIRMADO', doc.x + 250, signatureY + 85);
+      }
       
       // Pie de página
       const pageCount = doc.bufferedPageRange().count;
@@ -259,7 +452,7 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
         doc.font(normalFont)
            .fontSize(8)
            .text(
-             `Página ${i + 1} de ${pageCount} - Albarán: ${albaran._id}`,
+             `Página ${i + 1} de ${pageCount} - Albarán: ${albaran.albaranCode || albaran._id} - Fecha: ${new Date().toLocaleDateString('es-ES')}`,
              50,
              doc.page.height - 50,
              { align: 'center', width: doc.page.width - 100 }
@@ -295,7 +488,11 @@ const saveAlbaranPDF = async (albaran) => {
         fs.mkdirSync(uploadsDir, { recursive: true });
       }
       
-      const pdfPath = path.join(uploadsDir, `albaran-${albaran._id}.pdf`);
+      const fileName = albaran.albaranCode ? 
+        `albaran-${albaran.albaranCode.replace(/\//g, '-')}.pdf` : 
+        `albaran-${albaran._id}.pdf`;
+      
+      const pdfPath = path.join(uploadsDir, fileName);
       const fileStream = fs.createWriteStream(pdfPath);
       
       // Generar el PDF y escribirlo en el archivo

@@ -4,6 +4,7 @@ const validateResults = require("../utils/handleValidator")
 const validatorCreateClient = [
     check("name").exists().notEmpty().withMessage("El nombre es obligatorio"),
     check("email").exists().notEmpty().isEmail().withMessage("El correo es obligatorio"),
+    check("cif").exists().notEmpty().isString().withMessage("El CIF es obligatorio"),
     check("address").exists().notEmpty().withMessage("La dirección es obligatoria"),
     check("address.street").exists().notEmpty().withMessage("La calle es obligatoria"),
     check("address.number").exists().isNumeric().withMessage("El número debe ser numérico"),

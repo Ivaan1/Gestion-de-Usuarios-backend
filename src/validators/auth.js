@@ -49,15 +49,13 @@ const validatorRecoverPassword = [
 ]
 
 const validatorNewPassword = [
-    check("code").optional(),
-  check("oldPassword").optional(),
 
-  check("newPassword1")
+    check("newPassword1")
     .exists().withMessage("La contraseña es obligatoria.")
     .notEmpty().withMessage("La contraseña no puede estar vacía.")
     .isLength({ min: 8, max: 16 }).withMessage("Debe tener entre 8 y 16 caracteres."),
 
-  check("newPassword2")
+    check("newPassword2")
     .exists().withMessage("La contraseña es obligatoria.")
     .notEmpty().withMessage("La contraseña no puede estar vacía.")
     .isLength({ min: 8, max: 16 }).withMessage("Debe tener entre 8 y 16 caracteres."),

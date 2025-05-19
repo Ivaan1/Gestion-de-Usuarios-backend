@@ -39,6 +39,10 @@ const validatorCreateAlbaran = [
     check('pending')
         .optional({ checkFalsy: true })
         .isBoolean().withMessage('El estado pendiente debe ser un valor booleano'),
+        
+    check('albaranCode')
+        .exists({ checkFalsy: true }).withMessage('El código del albarán es obligatorio')
+        .isString().withMessage('El código del albarán debe ser una cadena de texto'),
 
     // Validar los resultados con la función personalizada
     (req, res, next) => {

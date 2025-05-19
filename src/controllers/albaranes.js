@@ -7,29 +7,43 @@ const path = require('path');
 const fs = require('fs/promises');
 
 
+  
 async function createAlbaran(req, res) {
     try {
+
         const { id } = req.user; // ID extraído del token 
-        
+        const { id : userId } = req.user; // ID del usuario extraído del token
         const data = matchedData(req); // Extraer los datos del cuerpo de la solicitud
+
+        const albaran = await albaranModel.findOne({ albaranCode: data.albaranCode });
+        const project = await projectModel.findOne({ _id: data.projectId });
+
+        if (project.userId.toString() !== userId) {
+            return handleHttpError(res, 'NOT_AUTHORIZED', 403); // Manejar el error si el usuario no está autorizado
+        }
+
+        if (albaran) {
+            return handleHttpError(res, 'ALBARAN_ALREADY_EXISTS', 409); 
+        }
 
         // Verificar que el clientId existe
         const client = await clientModel.findById(data.clientId);
         if (!client) {
-            return res.status(400).send({ message: 'El cliente no existe' });
+            return handleHttpError(res, 'CLIENT_NOT_FOUND', 404);
         }
 
         // Verificar que el projectId existe y pertenece al cliente
-        const project = await projectModel.findOne({ 
+        const existingproject = await projectModel.findOne({ 
             _id: data.projectId,
             clientId: data.clientId // Asegurarse de que el projectId pertenezca al clientId
         });
 
-        if (!project) {
-            return res.status(400).send({ message: 'El proyecto no existe o no pertenece a este cliente' });
+        if (!existingproject) {
+            return handleHttpError(res, 'PROJECT_NOT_FOUND', 404); 
         }
-          // Asegúrate de que 'material' y 'hours' sean arreglos según el 'format'
-          if (data.format === 'material' && !Array.isArray(data.material)) {
+
+        // Asegúrate de que 'material' y 'hours' sean arreglos según el 'format'
+        if (data.format === 'material' && !Array.isArray(data.material)) {
             return res.status(400).send({ message: 'El material debe ser un arreglo de cadenas de texto' });
         }
 
@@ -48,13 +62,14 @@ async function createAlbaran(req, res) {
         }
 
         
-        const albaran = await albaranModel.create({
+        const newalbaran = await albaranModel.create({
             ...data,
             userId: id, // Asignar el ID del usuario al albarán
             clientId: data.clientId, // Asignar el ID del cliente al albarán
+            projectId: data.projectId, // Asignar el ID del proyecto al albarán
         });
 
-        res.status(201).send({ data: albaran }); // Enviar la respuesta con el albarán creado
+        res.status(201).send({ data: newalbaran }); // Enviar la respuesta con el albarán creado
     } catch (error) {
         console.log(error); // Imprimir el error en la consola
         handleHttpError(res, 'ERROR_CREATE_ALBARAN', 500); // Manejar el error y enviar una respuesta al cliente
@@ -84,6 +99,7 @@ async function getAlbaranes(req, res) {
 async function getAlbaran(req, res) {
     try {
         const { id } = req.params; // ID del albarán extraído de los parámetros de la solicitud
+        const { id: userId } = req.user; // ID del usuario extraído del token
         
         const albaran = await albaranModel.findById(id)
             .populate('userId', 'email address') 
@@ -92,6 +108,10 @@ async function getAlbaran(req, res) {
 
         if (!albaran) {
             return handleHttpError(res, 'ALBARAN_NOT_FOUND', 404); // Manejar el error si el albarán no se encuentra
+        }
+
+        if (albaran.userId._id.toString() !== userId) {
+            return handleHttpError(res, 'NOT_AUTHORIZED', 403); // Manejar el error si el usuario no está autorizado
         }
 
         res.status(200).send({ data: albaran }); // Enviar la respuesta con el albarán encontrado
@@ -104,7 +124,7 @@ async function getAlbaran(req, res) {
 async function generatePDF(req, res) {
     try {
         const { id } = req.params;
-        const { userAuthId } = req.user; // ID extraído del token 
+        const { id: userAuthId } = req.user; // ID extraído del token 
     
         // Obtener datos del albarán de la base de datos
         const albaran = await albaranModel.findById(id)
@@ -129,7 +149,7 @@ async function generatePDF(req, res) {
     
         // Generar el PDF directamente al response stream
         await generateAlbaranPDF(albaran, res);
-        
+
       } catch (error) {
         console.log(error); // Imprimir el error en la consola
         handleHttpError(res, 'ERROR_GENERATE_ALBARAN_PDF', 500);
@@ -193,10 +213,10 @@ async function downloadPDF(req, res) {
         albaran.signed = true; // Marcar el albarán como firmado
 
         //accedemos a la ruta del pdf que se guarda en el servidor
-        const pdfPath = path.join(__dirname, '../uploads/albaranes', `albaran-${id}.pdf`);
+        const pdfPath = path.join(__dirname, '../uploads/albaranes', `albaran-${albaran.albaranCode}.pdf`);
         const pdfBuffer = await fs.readFile(pdfPath);
 
-        const pdfFileName = `albaran-${id}.pdf`; // El nombre del archivo PDF
+        const pdfFileName = `albaran-${albaran.albaranCode}.pdf`; // El nombre del archivo PDF
 
        // Subir el PDF a Pinata
        
@@ -229,10 +249,14 @@ async function downloadPDF(req, res) {
   async function deleteAlbaran(req, res) {
     try {
         const { id } = req.params; // ID del albarán a eliminar
+        const { id: userId } = req.user; // ID del usuario extraído del token
         const albaran = await albaranModel.findById(id); // Buscar albarán por ID
         if (!albaran) {
             return res.status(404).send('Albarán no encontrado');
         }   
+        if (albaran.userId.toString() !== userId) {
+            return res.status(403).send('No tienes permiso para eliminar este albarán');
+        }
         if (albaran.signed) {
             return res.status(400).send('No se puede eliminar un albarán firmado');
         }

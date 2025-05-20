@@ -4,6 +4,7 @@ const { tokenSign, tokenSignRecovery } = require('../utils/handleJWT')
 const { usersModel } = require('../models')
 const { handleHttpError } = require('../utils/handleErrors')
 const { sendEmail } = require("../utils/handleEmail")
+const { loggerStream } = require('../utils/handleLogger')
 
 async function registerUser(req, res) {
     try {
@@ -32,14 +33,13 @@ async function registerUser(req, res) {
         }
 
         res.send(data)
+        
+
     } catch (e) {
-        if (e.error === 1100) {
-            console.log("Ese correo ya existe en la base de datos")
-            handleHttpError(res, 'EMAIL_ERROR', 409)
-        } else {
             console.log(e)
             handleHttpError(res, 'REGISTER_ERROR')
-        }
+             // Añade el mensaje de error real en Slack
+            loggerStream.write(`🚨 Ha ocurrido un error crítico: ${e.message}`);
     }
 }
 
@@ -80,6 +80,7 @@ async function validateUser(req, res) {
     } catch (e) {
         console.log(e)
         handleHttpError(res, 'VALIDATION_ERROR')
+        loggerStream.write(`🚨 Ha ocurrido un error crítico: ${e.message}`);
     }
 }
 
@@ -120,6 +121,7 @@ async function loginUser(req, res) {
     } catch (e) {
         console.log(e)
         handleHttpError(res, 'ERROR_USER_LOGIN')
+        loggerStream.write(`🚨 Ha ocurrido un error crítico: ${e.message}`);
     }
 }
 
@@ -157,6 +159,7 @@ async function recoverPassword(req, res) {
     } catch (e) {
         console.log(e)
         handleHttpError(res)
+        loggerStream.write(`🚨 Ha ocurrido un error crítico: ${e.message}`);
     }
 }
 
@@ -183,6 +186,7 @@ async function newpassword(req, res) {
     } catch (e) {
         console.log(e)
         handleHttpError(res, 'ERROR_UPDATE_PASSWORD')
+        loggerStream.write(`🚨 Ha ocurrido un error crítico: ${e.message}`);
     }
 }
 

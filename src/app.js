@@ -13,7 +13,7 @@ const { specs } = require('./docs/swagger')
 
 const morganBody = require("morgan-body")
 
-const loggerStream = require("./utils/handleLogger")
+const { loggerStream } = require("./utils/handleLogger")
 
 
 morganBody(app, {

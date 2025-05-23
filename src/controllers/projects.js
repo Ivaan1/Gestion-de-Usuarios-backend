@@ -178,6 +178,16 @@ async function deleteProject(req, res) {
     }
 }
 
+async function deleteAllProjects(req, res) {
+    try {
+        await projectModel.deleteMany({ }); 
+        res.send({ message: 'Todos los proyectos eliminados' }); 
+    } catch (error) {
+        console.log(error);
+        handleHttpError(res, 'ERROR_DELETE_ALL_PROJECTS', 500); 
+    }
+}
+
 
 module.exports = {
     createProject,
@@ -186,5 +196,6 @@ module.exports = {
     getProject,
     archiveProject,
     restoreProject,
-    deleteProject
+    deleteProject,
+    deleteAllProjects,
 };

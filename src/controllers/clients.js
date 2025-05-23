@@ -216,6 +216,16 @@ async function getProjectOfClient(req, res) {
     }
 }
 
+async function deleteAllClients(req, res) {
+    try {
+        const data = await clientModel.deleteMany({}); // Eliminar todos los clientes
+        res.send(data);
+    } catch (error) {
+        console.log(error);
+        handleHttpError(res, 'ERROR_DELETE_ALL_CLIENTS', 500);
+    }
+}
+
 
 module.exports = { 
     getClients,
@@ -226,5 +236,6 @@ module.exports = {
     deleteClient,
     restoreClient,
     updateClient,
-    getProjectOfClient
+    getProjectOfClient,
+    deleteAllClients,
 }

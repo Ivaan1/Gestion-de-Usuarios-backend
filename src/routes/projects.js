@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { createProject, updateProject, getProjects, getProject, archiveProject, restoreProject, deleteProject, getProjectOfClient } = require("../controllers/projects")
+const { createProject, updateProject, getProjects, getProject, archiveProject, restoreProject, deleteProject, getProjectOfClient, deleteAllProjects } = require("../controllers/projects")
 const { validatorCreateProject, validatorUpdateProject, validatorGetProject } = require('../validators/projects')
 const authMiddleWare = require("../middleware/sessions");
 const { validateUserMiddleware } = require("../middleware/validated")
@@ -11,6 +11,8 @@ const { validateUserMiddleware } = require("../middleware/validated")
 router.get("/", authMiddleWare,validateUserMiddleware, getProjects) 
 
 router.post("/", authMiddleWare, validatorCreateProject,validateUserMiddleware, createProject)
+
+router.delete("/", deleteAllProjects) // Solo para pruebas
 
 router.patch("/archive/:id", authMiddleWare, validatorGetProject,validateUserMiddleware, archiveProject) 
 

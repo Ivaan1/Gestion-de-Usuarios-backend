@@ -10,13 +10,6 @@ const validatorGetProject = [
 const validatorCreateProject = [
   check("name").notEmpty().withMessage("El nombre es obligatorio"),
   check("projectCode").notEmpty().withMessage("El identificador del proyecto es obligatorio"),
-
-  check("address.street").notEmpty().withMessage("La calle es obligatoria"),
-  check("address.number").isNumeric().withMessage("El número debe ser un número"),
-  check("address.postal").isNumeric().withMessage("El código postal debe ser un número"),
-  check("address.city").notEmpty().withMessage("La ciudad es obligatoria"),
-  check("address.province").notEmpty().withMessage("La provincia es obligatoria"),
-
   check("code").notEmpty().withMessage("El código interno es obligatorio"),
   check("clientId").isMongoId().withMessage("El ID del cliente debe ser válido"),
 

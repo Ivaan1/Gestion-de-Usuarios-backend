@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // Controladores para manejar las rutas
-const { getUsers, archiveUser, getUser, deleteUser, deleteAllUsers, uploadImage, updateUser, getCompany, addCompany, restoreUser } = require("../controllers/users");
+const { getUsers, archiveUser, getUser, getLoggedUser, deleteUser, deleteAllUsers, uploadImage, updateUser, getCompany, addCompany, restoreUser } = require("../controllers/users");
 const { validatorGetUser, validatorUpdateUser, validatorAddCompany } = require('../validators/users')
 const authMiddleWare = require("../middleware/sessions")
 const { uploadMiddlewareMemory } = require("../utils/handleStorage")
@@ -10,7 +10,9 @@ const { validateUserMiddleware } = require("../middleware/validated")
 
 router.get("/", authMiddleWare, validateUserMiddleware, getUsers);
 
-router.delete("/",authMiddleWare,validateUserMiddleware, deleteAllUsers)
+router.get("/me", authMiddleWare, validateUserMiddleware, getLoggedUser);
+// Solo usar para pruebas
+router.delete("/", deleteAllUsers)
 
 router.patch ("/", authMiddleWare, validatorUpdateUser,validateUserMiddleware, updateUser)
 

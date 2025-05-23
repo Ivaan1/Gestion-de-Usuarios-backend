@@ -54,6 +54,23 @@ async function getUser(req, res) {
     }
 }
 
+async function getLoggedUser(req, res) {
+    try {
+        const { id } = req.user;
+
+        const user = await usersModel.findById(id);
+
+        if (!user) {
+            return res.status(400).send('Usuario no encontrado');
+        }
+
+        res.send({ data: user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al obtener el usuario');
+    }
+}
+
 /**
  * Función para crear un nuevo usuario.
  * 
@@ -98,13 +115,7 @@ async function deleteUser(req, res) {
 }
 
 
-/**
- * Función para eliminar todos los usuarios.
- * 
- * @param {*} req 
- * @param {*} res 
- * @returns Respuesta del borrado de la base de datos.
- */
+//USAR SOLO PARA PRUEBAS
 async function deleteAllUsers(req, res) {
     try {
         // Elimina todos los usuarios
@@ -300,6 +311,7 @@ module.exports = {
     getCompany,
     addCompany,
     archiveUser,
-    restoreUser
+    restoreUser,
+    getLoggedUser,
     // Puedes agregar más funciones según sea necesario
 };

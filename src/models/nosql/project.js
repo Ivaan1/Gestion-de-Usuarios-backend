@@ -1,28 +1,5 @@
 const mongoose = require('mongoose');
 
-// Dirección del proyecto
-const addressSchema = new mongoose.Schema({
-    street: { // Calle
-        type: String,
-        required: true
-    },
-    number: { // Número de la dirección
-        type: Number,
-        required: true
-    },
-    postal: { // Código postal
-        type: Number,
-        required: true
-    },
-    city: { // Ciudad
-        type: String,
-        required: true
-    },
-    province: { // Provincia
-        type: String,
-        required: true
-    }
-}, { _id: false }); // No queremos un _id para la dirección
 
 // Modelo de Proyecto
 const projectSchema = new mongoose.Schema({
@@ -35,9 +12,9 @@ const projectSchema = new mongoose.Schema({
         required: true,
         unique: true // Debe ser único
     },
-    address: { // Dirección del proyecto
-        type: addressSchema,
-        required: false
+    description: { // Descripción del proyecto
+        type: String,
+        required: true
     },
     code: { // Código interno del proyecto
         type: String,

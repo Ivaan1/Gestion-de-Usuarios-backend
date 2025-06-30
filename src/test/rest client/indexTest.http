@@ -9,3 +9,7 @@ Content-Type: application/json
 ### Borrar a todos los proyectos  SOLO PRUEBAS
 DELETE http://localhost:5000/api/projects
 Content-Type: application/json
+
+### Borrar a todos los albaranes  SOLO PRUEBAS
+DELETE http://localhost:5000/api/albaranes
+Content-Type: application/json

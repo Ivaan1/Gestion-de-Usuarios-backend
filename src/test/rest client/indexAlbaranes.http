@@ -3,12 +3,12 @@ POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
-  "email" : "ivanmanuel121310@gmail.com",
-  "password" : "password123"
+  "email" : "ivan@gmail.com",
+  "password" : "ivanivan"
 }
 
 ### Guardar manualmente el token (Reemplaza despues del login)
-@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODJiOTk3MWY4MjFmNzBkMzAwNzMzN2QiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0NzY5NTY2NSwiZXhwIjoxNzU4MDYzNjY1fQ.MVCGM38hW1Z7ISXGHNpMuqS9UqYKsWf-f_QZKRtIih0
+@auth_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODMwODhiMDg5MGIzMzI5NWQ2NzU4MzgiLCJyb2xlIjoidXN1YXJpbyIsImlhdCI6MTc0ODAyMzA2MSwiZXhwIjoxNzU4MzkxMDYxfQ._ElqtBHgl6v1zhdpHLJ7SCaj5wdrXVfDbI2Lhh5Xnp0
 
 ### Obtener algun client ID
 GET http://localhost:5000/api/clients
@@ -49,7 +49,7 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 ### Guardar manualmente el ID del albarán
-@albaranId = 681917fd49a65956afdfd0b5
+@albaranId = 682bbb77ba0243a4c7ea1654
 
 ### Obtener un albarán por ID
 GET http://localhost:5000/api/albaranes/{{albaranId}}
@@ -79,3 +79,7 @@ DELETE http://localhost:5000/api/albaranes/{{albaranId}}
 Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
+### obtener albaran de un proyecto
+GET http://localhost:5000/api/albaranes/project/68308e3ea442248b2dc8748d
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json

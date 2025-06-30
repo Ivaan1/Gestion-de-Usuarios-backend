@@ -1,5 +1,5 @@
 
-const { projectModel } = require('../models'); // Importar el modelo de proyecto
+const { projectModel, clientModel } = require('../models'); // Importar el modelo de proyecto
 const { handleHttpError } = require('../utils/handleErrors')
 const { matchedData } = require('express-validator')
 
@@ -22,6 +22,14 @@ async function createProject(req, res) {
             userId: id, // Asignar el ID del usuario al proyecto
             clientId: data.clientId, // Asignar el ID del cliente al proyecto
         });
+
+        const client = await clientModel.findById(data.clientId); // Buscar el cliente por ID
+        
+        //agregar +1 a activeprojects del cliente
+        if (client) {
+            client.activeProjects += 1; // Incrementar el contador de proyectos activos
+            await client.save(); // Guardar los cambios en el cliente
+        }
 
         res.status(201).send({ data: project }); // Enviar la respuesta con el proyecto creado
     } catch (error) {

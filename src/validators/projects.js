@@ -12,7 +12,8 @@ const validatorCreateProject = [
   check("projectCode").notEmpty().withMessage("El identificador del proyecto es obligatorio"),
   check("code").notEmpty().withMessage("El código interno es obligatorio"),
   check("clientId").isMongoId().withMessage("El ID del cliente debe ser válido"),
-
+  check("description").notEmpty().withMessage("La descripción es obligatoria"),
+  
   (req, res, next) => validateResults(req, res, next),
 ];
 
@@ -20,16 +21,10 @@ const validatorUpdateProject = [
 
   check("name").optional().isString().withMessage("El nombre debe ser una cadena de texto"),
 
-  check("address.street").optional().isString().withMessage("La calle debe ser una cadena de texto"),
-  check("address.number").optional().isNumeric().withMessage("El número debe ser un número"),
-  check("address.postal").optional().isNumeric().withMessage("El código postal debe ser un número"),
-  check("address.city").optional().isString().withMessage("La ciudad debe ser una cadena de texto"),
-  check("address.province").optional().isString().withMessage("La provincia debe ser una cadena de texto"),
-
   check("code").optional().isString().withMessage("El código interno debe ser una cadena de texto"),
   check("clientId").optional().isMongoId().withMessage("El ID del cliente debe ser válido"),
 
-  
+  check("description").optional().isString().withMessage("La descripción debe ser una cadena de texto"),
   check("notes").optional().isString().withMessage("Las notas deben ser una cadena de texto"),
   check("begin").optional().isDate().withMessage("La fecha de inicio debe ser una fecha válida"),
   check("end").optional().isDate().withMessage("La fecha de fin debe ser una fecha válida"),

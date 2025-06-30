@@ -55,8 +55,7 @@ const generateAlbaranPDF = async (albaran, outputStream) => {
          .fontSize(10)
          .text(`Empresa: Tu Empresa S.L.`)
          .text(`Email: ${albaran.userId.email}`)
-         .text(`Dirección: ${albaran.userId.address.street} ${albaran.userId.address.number}, ${albaran.userId.address.postal} ${albaran.userId.address.city}, ${albaran.userId.address.province}`);
-      
+  
       doc.moveDown();
       
       // Información del cliente

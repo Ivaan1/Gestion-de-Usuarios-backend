@@ -37,6 +37,14 @@ app.use("/api-docs",
     swaggerUi.setup(specs)
    )
 
+   // ** Middleware global de manejo de errores **
+app.use((err, req, res, next) => {
+    console.error("Error capturado:", err)  // Imprime error en consola
+    res.status(err.status || 500).json({
+        message: err.message || "Error interno del servidor"
+    })
+})
+
 const port = process.env.PORT || 5000
 
 app.listen(port, () => {

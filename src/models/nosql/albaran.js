@@ -65,6 +65,10 @@ const albaranSchema = new mongoose.Schema({
         required: true, 
         unique: true // El código del albarán debe ser único
     },
+    pdfGenerated: { 
+        type: Boolean, 
+        default: false // Indica si el PDF ha sido generado
+    }
 }, {
     timestamps: true // Esto agrega automáticamente createdAt y updatedAt
 });

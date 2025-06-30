@@ -69,10 +69,15 @@ async function createAlbaran(req, res) {
             projectId: data.projectId, // Asignar el ID del proyecto al albarán
         });
 
+        // añadir +1 a activeDeliveryNotes del cliente
+        client.activeDeliveryNotes += 1; // Incrementar el contador de albaranes activos
+        await client.save(); // Guardar los cambios en el cliente
+
         res.status(201).send({ data: newalbaran }); // Enviar la respuesta con el albarán creado
     } catch (error) {
-        console.log(error); // Imprimir el error en la consola
-        handleHttpError(res, 'ERROR_CREATE_ALBARAN', 500); // Manejar el error y enviar una respuesta al cliente
+        console.error("Error inesperado:", error); // Lo imprimes aquí también para no perderlo
+        // handleHttpError(res, 'ERROR_CREATE_ALBARAN', 500);
+        next(error);
     }
     
 }
@@ -140,15 +145,14 @@ async function generatePDF(req, res) {
             return handleHttpError(res, 'UNAUTHORIZED_ACCESS', 403);
         }
 
-        // Se guarda el PDF localmente en el servidor pero no se permite descargarlo sin firmarlo
-        await saveAlbaranPDF(albaran);
+        await saveAlbaranPDF(albaran);  // Generar y guardar
 
-        // Configurar cabeceras para descarga del PDF
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=albaran-${id}.pdf`);
-    
-        // Generar el PDF directamente al response stream
-        await generateAlbaranPDF(albaran, res);
+        // Actualizar el campo pdfGenerated a true
+        albaran.pdfGenerated = true;
+        await albaran.save();
+
+
+        return res.status(200).json({ message: 'PDF generado correctamente' });
 
       } catch (error) {
         console.log(error); // Imprimir el error en la consola
@@ -269,6 +273,40 @@ async function downloadPDF(req, res) {
     }
 }
 
+async function getAlbaranesByProject(req, res) {
+    try {
+        const { id: projectId } = req.params; // ID del proyecto extraído de los parámetros de la solicitud
+        const { id: userId } = req.user; // ID del usuario extraído del token
+
+        const albaranes = await albaranModel.find({ projectId, userId })
+            .populate('userId', 'name email address') 
+            .populate('clientId', 'name address cif') 
+            .populate('projectId', 'name projectCode');
+
+        if (!albaranes) {
+            return handleHttpError(res, 'ALBARANES_NOT_FOUND', 404); // Manejar el error si no se encuentran albaranes
+        }
+
+        res.status(200).send({ data: albaranes }); // Enviar la respuesta con los albaranes encontrados
+    } catch (error) {
+        console.log(error); // Imprimir el error en la consola
+        handleHttpError(res, 'ERROR_GET_ALBARANES', 500); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
+//SOLO USAR PARA TESTING
+//esta funcion elimina todos los albaranes de la base de datos
+async function deleteAllAlbaranes(req, res) {
+    try {
+        await albaranModel.deleteMany({}); // Eliminar todos los albaranes de la base de datos
+        res.status(200).send({ message: 'Todos los albaranes han sido eliminados' }); // Enviar respuesta de éxito
+    } catch (error) {
+        console.log(error); // Imprimir el error en la consola
+        handleHttpError(res, 'ERROR_DELETE_ALL_ALBARANES', 500); // Manejar el error y enviar una respuesta al cliente
+    }
+}
+
+
 module.exports = {
     createAlbaran,
     getAlbaranes,
@@ -276,6 +314,8 @@ module.exports = {
     generatePDF,
     downloadPDF,
     uploadSign,
-    deleteAlbaran
+    deleteAlbaran,
+    getAlbaranesByProject,
+    deleteAllAlbaranes,
     // Aquí puedes agregar más funciones para manejar otras operaciones relacionadas con albaranes
 };
